@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallOrderVerifyMapper">
+
+    <!-- 开启二级缓存 -->
+    <select id="querySensitiveGoodsVerifyList" resultType="com.meifute.core.dto.OrderVerifyDto"
+            parameterType="com.meifute.core.entity.MallOrderVerify">
+        select
+        t1.admin_code as adminId,
+        ov.id as id, ov.order_id as orderId, ov.proposer_id as proposerId, ov.accepter_id as accepterId, ov.admin_id as
+        adminId,
+        ov.verify_type as verifyType, ov.verify_status as verifyStatus, ov.verify_memo as verifyMemo, ov.create_date as
+        createDate,ov.update_date as updateDate,ov.admin_remark adminRemark
+        from m_mall_order.mall_order_verify ov
+        LEFT JOIN m_mall_admin.admin_agent t1
+        on ov.proposer_id = t1.mall_user_id
+        <where>
+            ov.verify_type='1'
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                AND ov.proposer_id  in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="mallUserId" index="index">
+                    #{mallUserId, jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            <if test="param.dateFrom != null">
+                AND ov.create_date &gt;= #{param.dateFrom}
+            </if>
+            <if test="param.dateTo != null">
+                AND ov.create_date &lt;= #{param.dateTo}
+            </if>
+            <if test="param.status == null or param.status == ''">
+                AND verify_status in ('0','1','2')
+            </if>
+            <if test="param.status != null and param.status != ''">
+                and verify_status = #{param.status}
+            </if>
+            <if test="param.orderId != null and param.orderId != ''">
+                and order_id = #{param.orderId,jdbcType=VARCHAR}
+            </if>
+            <if test="param.adminId != null and param.adminId != ''">
+                <if test="param.adminId == 00">
+                    and t1.admin_code is null
+                </if>
+                <if test="param.adminId != 00">
+                    and t1.admin_code  = #{param.adminId,jdbcType=VARCHAR}
+                </if>
+
+            </if>
+            <if test="param.skuCode != null or param.addrName != null or param.addrPhone != null " >
+                and order_id in(
+                    SELECT
+                    `info`.`order_id`
+                    FROM
+                    `mall_order_info` info
+                    LEFT JOIN `mall_order_item` item ON `info`.`order_id` = `item`.`order_id`
+                    WHERE item.is_del = '0' and info.is_del = '0'
+                        <if test="param.skuCode != null">
+                          and item.sku_code = #{param.skuCode,jdbcType=VARCHAR}
+                        </if>
+                        <if test="param.addrName != null">
+                            and info.addr_name = #{param.addrName,jdbcType=VARCHAR}
+                        </if>
+                        <if test="param.addrPhone != null">
+                            and info.addr_phone = #{param.addrPhone,jdbcType=VARCHAR}
+                        </if>
+                    )
+            </if>
+        </where>
+        order by ov.create_date desc
+    </select>
+
+
+
+    <select id="queryMallOrderVerifyPageList"  parameterType="com.meifute.core.entity.MallOrderVerify"
+            resultType="com.meifute.core.entity.MallOrderVerify">
+        select m.id, m.order_id as orderId, m.proposer_id as proposerId, m.accepter_id as accepterId, m.admin_id as
+        adminId, m.verify_type as verifyType, m.verify_status as verifyStatus, m.verify_memo as verifyMemo,
+        m.create_date as createDate, m.update_date as updateDate, m.is_del as isDel,m.admin_remark adminRemark
+        from mall_order_verify m
+        <where>
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                ov.proposer_id  in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="mallUserId" index="index">
+                    #{mallUserId, jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            <if test="param.id != null">
+                AND m.id LIKE CONCAT('%',#{param.id},'%')
+            </if>
+            <if test="param.orderId != null">
+                AND m.order_id =#{param.orderId}
+            </if>
+            AND m.is_del='0'
+            <if test="param.verifyType != null">
+              AND m.verify_type=#{param.verifyType}
+            </if>
+        </where>
+        GROUP BY m.id
+        ORDER BY m.create_date DESC
+    </select>
+
+    <!-- 敏感订单列表查询对应商务为null的数据 -->
+    <select id="queryVerifyOrderListFirstParent" resultType="com.meifute.core.dto.OrderVerifyDto">
+        SELECT
+	tab1.adminCode as adminId,
+	tab2.id,
+	tab2.orderId,
+	tab2.proposerId,
+	tab2.accepterId,
+	tab2.verifyType,
+	tab2.verifyStatus,
+	tab2.verifyMemo,
+	tab2.createDate,
+	tab2.updateDate,
+	tab2.adminRemark
+FROM
+	(
+SELECT
+	t1.admin_code,
+	ov.id AS id,
+	ov.order_id AS orderId,
+	ov.proposer_id AS proposerId,
+	ov.accepter_id AS accepterId,
+	ov.admin_id AS adminId,
+	ov.verify_type AS verifyType,
+	ov.verify_status AS verifyStatus,
+	ov.verify_memo AS verifyMemo,
+	ov.create_date AS createDate,
+	ov.update_date AS updateDate,
+	ov.admin_remark adminRemark
+FROM
+	m_mall_order.mall_order_verify ov
+	LEFT JOIN m_mall_admin.admin_agent t1 ON ov.proposer_id = t1.mall_user_id
+WHERE
+	ov.verify_type = '1'
+	AND t1.admin_code IS NULL
+        <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+            AND ov.proposer_id  in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="mallUserId" index="index">
+                #{mallUserId, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="param.dateFrom != null">
+            AND ov.create_date &gt;= #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            AND ov.create_date &lt;= #{param.dateTo}
+        </if>
+        <if test="param.status == null or param.status == ''">
+            AND verify_status in ('0','1','2')
+        </if>
+        <if test="param.status != null and param.status != ''">
+            and verify_status = #{param.status}
+        </if>
+        <if test="param.orderId != null and param.orderId != ''">
+            and order_id = #{param.orderId,jdbcType=VARCHAR}
+        </if>
+        <if test="param.skuCode != null or param.addrName != null or param.addrPhone != null " >
+            and order_id in(
+            SELECT
+            `info`.`order_id`
+            FROM
+            `mall_order_info` info
+            LEFT JOIN `mall_order_item` item ON `info`.`order_id` = `item`.`order_id`
+            WHERE item.is_del = '0' and info.is_del = '0'
+            <if test="param.skuCode != null">
+                and item.sku_code = #{param.skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="param.addrName != null">
+                and info.addr_name = #{param.addrName,jdbcType=VARCHAR}
+            </if>
+            <if test="param.addrPhone != null">
+                and info.addr_phone = #{param.addrPhone,jdbcType=VARCHAR}
+            </if>
+            )
+        </if>
+ORDER BY
+	ov.create_date DESC
+	) tab2
+	LEFT JOIN (
+SELECT
+	ag.admin_code AS adminCode,
+	t2.proposerId
+FROM
+	(
+SELECT
+	t1.admin_code,
+	ov.proposer_id AS proposerId
+FROM
+	m_mall_order.mall_order_verify ov
+	LEFT JOIN m_mall_admin.admin_agent t1 ON ov.proposer_id = t1.mall_user_id
+WHERE
+	ov.verify_type = '1'
+	AND t1.admin_code IS NULL
+        <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+            AND ov.proposer_id  in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="mallUserId" index="index">
+                #{mallUserId, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="param.dateFrom != null">
+            AND ov.create_date &gt;= #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            AND ov.create_date &lt;= #{param.dateTo}
+        </if>
+        <if test="param.status == null or param.status == ''">
+            AND verify_status in ('0','1','2')
+        </if>
+        <if test="param.status != null and param.status != ''">
+            and verify_status = #{param.status}
+        </if>
+        <if test="param.orderId != null and param.orderId != ''">
+            and order_id = #{param.orderId,jdbcType=VARCHAR}
+        </if>
+        <if test="param.skuCode != null or param.addrName != null or param.addrPhone != null " >
+            and order_id in(
+            SELECT
+            `info`.`order_id`
+            FROM
+            `mall_order_info` info
+            LEFT JOIN `mall_order_item` item ON `info`.`order_id` = `item`.`order_id`
+            WHERE item.is_del = '0' and info.is_del = '0'
+            <if test="param.skuCode != null">
+                and item.sku_code = #{param.skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="param.addrName != null">
+                and info.addr_name = #{param.addrName,jdbcType=VARCHAR}
+            </if>
+            <if test="param.addrPhone != null">
+                and info.addr_phone = #{param.addrPhone,jdbcType=VARCHAR}
+            </if>
+            )
+        </if>
+ORDER BY
+	ov.create_date DESC
+	) t2
+	LEFT JOIN m_mall_agent.mall_agent ma ON t2.proposerId = ma.user_id
+    LEFT JOIN m_mall_agent.mall_agent ma1 on ma1.id = ma.parent_id
+    LEFT JOIN	m_mall_admin.admin_agent ag on ag.mall_user_id = ma1.user_id
+    ) tab1 ON tab1.proposerId = tab2.proposerId
+	GROUP BY tab2.id
+    </select>
+
+    <!-- 根据userIdc查询上上级adminCode -->
+    <select id="querySecondParentAdminCode" resultType="java.lang.String">
+
+        SELECT
+            adag.admin_code
+        FROM
+            m_mall_admin.admin_agent adag,
+            m_mall_agent.mall_agent t5
+        WHERE
+            adag.mall_user_id = t5.user_id
+            AND t5.id IN (
+        SELECT
+            t4.parent_id
+        FROM
+            m_mall_user.mall_user t3,
+            m_mall_agent.mall_agent t4
+        WHERE
+            t3.id = t4.user_id
+            AND t4.id IN (
+        SELECT
+            t2.parent_id
+        FROM
+            m_mall_user.mall_user t1,
+            m_mall_agent.mall_agent t2
+        WHERE
+            t1.id = t2.user_id
+            AND t1.is_test_user = '1'
+            AND t1.id = #{userId}
+            )
+            )
+    </select>
+
+    <!-- 根据userId查询上级adminCode -->
+    <select id="queryFirstParentAdminCode" resultType="java.lang.String">
+SELECT
+            adag.admin_code
+        FROM
+            m_mall_user.mall_user t3,
+            m_mall_agent.mall_agent t4,
+						 m_mall_admin.admin_agent adag
+        WHERE
+            t3.id = t4.user_id
+						and adag.mall_user_id = t4.user_id
+            AND t4.id IN (
+        SELECT
+            t2.parent_id
+        FROM
+            m_mall_user.mall_user t1,
+            m_mall_agent.mall_agent t2
+        WHERE
+            t1.id = t2.user_id
+            AND t1.is_test_user = '1'
+            AND t1.id = #{userId}
+            )
+    </select>
+
+
+</mapper>

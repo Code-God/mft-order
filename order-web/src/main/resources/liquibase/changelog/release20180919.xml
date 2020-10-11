@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017. Shanghai Zhenhui Information Technology Co,. ltd.
+  ~ All rights are reserved.
+  -->
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+
+    <changeSet id="201809191623001" author="xb.wu">
+        <sqlFile path="classpath:liquibase\init\init_mall_order.sql" encoding="UTF-8"/>
+    </changeSet>
+
+    <!--<changeSet id="2018112610170001" author="liuzh">-->
+        <!--<createIndex tableName="mall_order_info" indexName="index_mall_user_id">-->
+            <!--<column name="mall_user_id" type="varchar(20)"></column>-->
+        <!--</createIndex>-->
+    <!--</changeSet>-->
+   <changeSet id="20181220141222201" author="liuzh">
+       <modifyDataType tableName="mall_order_info" columnName="eclpsono" newDataType="varchar(3500)"/>
+   </changeSet>
+
+    <changeSet id="20181220141222202" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="pay_date" type="datetime"  remarks="支付时间"></column>
+            <column name="deliver_goods_date" type="datetime"  remarks="发货时间"></column>
+            <column name="confirm_goods_date" type="datetime" remarks="确认收货时间" ></column>
+            <column name="complete_date" type="datetime"  remarks="订单完成时间"></column>
+        </addColumn>
+    </changeSet>
+
+   <changeSet id="20181220141222203" author="xb.wu">
+       <addColumn tableName="mall_order_info">
+           <column name="order_describe" type="varchar(2000)" defaultValue="" remarks="订单描叙"></column>
+       </addColumn>
+   </changeSet>
+    <changeSet id="2019010216360001" author="liuzh">
+        <addColumn tableName="mall_order_info">
+            <column name="summary_amt" type="decimal(20,2)" remarks="汇总金额" defaultValue=""></column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="2019010217150001" author="liuzh">
+        <addDefaultValue tableName="mall_order_info" columnName="summary_amt" defaultValue="0.00"/>
+    </changeSet>
+
+    <changeSet id="2019010217150002" author="xb.wu">
+        <!--<createIndex tableName="mall_order_info" indexName="idx_order_id">-->
+            <!--<column name="order_id" type="varchar(20)" remarks="订单ID"/>-->
+        <!--</createIndex>-->
+        <createIndex tableName="mall_order_item" indexName="idx_order_id">
+            <column name="order_id" type="varchar(20)" remarks="订单ID"/>
+        </createIndex>
+        <createIndex tableName="mall_order_verify" indexName="idx_proposer_id">
+            <column name="proposer_id" type="varchar(20)" remarks="申请人id"/>
+        </createIndex>
+        <createIndex tableName="mall_order_verify" indexName="idx_order_id">
+            <column name="order_id" type="varchar(20)" remarks="订单ID"/>
+        </createIndex>
+        <createIndex tableName="mall_regulate_goods" indexName="idx_regulate_id">
+            <column name="regulate_id" type="varchar(20)" remarks="调剂单号"/>
+        </createIndex>
+        <createIndex tableName="mall_regulate_info" indexName="idx_user_id">
+            <column name="mall_user_id" type="varchar(20)" remarks="用户ID"/>
+        </createIndex>
+        <createIndex tableName="mall_transfer_goods" indexName="idx_relation">
+            <column name="relation_id" type="varchar(20)" remarks="关联单据"/>
+            <column name="relation_type" type="char(1)" remarks="关联类型"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2019010910590001" author="liuzh">
+        <createIndex tableName="mall_order_item" indexName="idx_cart_id">
+            <column name="cart_id" type="varchar(20)"></column>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="2019010913560001" author="liuzh">
+        <renameColumn tableName="mall_order_info" oldColumnName="order_type" newColumnName="order_type" columnDataType="varchar(1)" remarks="订单类型  0直接发货 1入云库存 2云库存提货 3云库存换货 4云库存转货"/>
+        <!--<setColumnRemarks tableName="mall_order_info" columnName="order_type" remarks="订单类型  0直接发货 1入云库存 2云库存提货 3云库存换货 4云库存转货"/>-->
+    </changeSet>
+    <changeSet id="2019012116250001" author="liuzh">
+        <dropDefaultValue tableName="mall_order_info" columnName="express_code"></dropDefaultValue>
+        <addDefaultValue tableName="mall_order_info" columnName="express_code" defaultValue="" />
+    </changeSet>
+    <!--<changeSet id="2019013111100001" author="liuzh">-->
+        <!--<createIndex tableName="mall_order_info" indexName="idx_create_date">-->
+            <!--<column name="create_date" type="datetime"></column>-->
+        <!--</createIndex>-->
+        <!--<createIndex tableName="mall_order_info" indexName="idx_order_type">-->
+            <!--<column name="order_type" type="varchar(1)"></column>-->
+        <!--</createIndex>-->
+        <!--<createIndex tableName="mall_order_info" indexName="idx_order_status">-->
+            <!--<column name="order_status" type="char(2)"></column>-->
+        <!--</createIndex>-->
+        <!--<createIndex tableName="mall_order_info" indexName="idx_currency">-->
+            <!--<column name="currency" type="char(1)"></column>-->
+        <!--</createIndex>-->
+        <!--<createIndex tableName="mall_order_item" indexName="idx_sku_code">-->
+            <!--<column name="sku_code" type="varchar(20)"></column>-->
+        <!--</createIndex>-->
+    <!--</changeSet>-->
+
+    <changeSet id="201902201149001" author="liang.liu">
+        <addColumn tableName="mall_order_verify">
+            <column name="admin_remark" type="varchar(1000)" remarks="admin备注"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="201902221500012" author="xb.wu">
+        <createTable tableName="mall_order_to_push" remarks="待推单">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="order_id" type="varchar(20)" remarks="订单id"/>
+            <column name="status" type="varchar(1)" defaultValue="0" remarks="0待推单，1已推单"/>
+            <column name="create_date" type="datetime" remarks="创建时间"/>
+            <column name="update_date" type="datetime" remarks="更新时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="是否删除"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2019030711420001" author="liuzh">
+        <addColumn tableName="mall_order_info">
+            <column name="retry_amt" type="char(1)" defaultValue="0" remarks="重推单次数"></column>
+            <column name="last_retry_time" type="datetime" remarks="最后一次重推单时间"></column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="2019030716360002" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="relation_order_id" type="varchar(20)" remarks="退款单绑定的原订单号"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2019031516440001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="is_can_jd" type="char(1)" defaultValue="0" remarks="京东是否可达"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="201903181022001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="transaction_id" type="varchar(40)"  remarks="微信支付单号"></column>
+            <column name="trade_no" type="varchar(40)" remarks="支付宝支付单号"></column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="2019032010060001" author="wzpeng">
+        <createIndex tableName="mall_order_info" indexName="idx_addrName_addrPhone">
+            <column name="addr_name"/>
+            <column name="addr_phone"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2019041116240001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="verify_img" type="varchar(2000)"  remarks="敏感审核图片"></column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="2019052411590001" author="xb.wu">
+        <createTable tableName="mall_order_feedback" remarks="订单反馈">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="order_id" type="varchar(20)" remarks="关联订单id"/>
+            <column name="feedback_type" type="varchar(1000)" remarks="问题类型"/>
+            <column name="feedback_detail" type="varchar(2000)" remarks="反馈详情"/>
+            <column name="feedback_image" type="varchar(3000)" remarks="反馈图片"/>
+            <column name="feedback_person" type="varchar(20)" remarks="反馈人"/>
+            <column name="feedback_person_leader" type="varchar(20)" remarks="反馈人上级"/>
+            <column name="feedback_admin" type="varchar(20)" remarks="反馈人专属商务"/>
+            <column name="status" type="char(1)" defaultValue="0" remarks="状态 0待处理，1已处理"/>
+            <column name="create_date" type="datetime" remarks="创建时间"/>
+            <column name="update_date" type="datetime" remarks="更新时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="0正常，1删除"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="201906281609001" author="xb.wu">
+        <addColumn tableName="mall_order_feedback">
+            <column name="remark" type="text"  remarks="备注"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="201906191340001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="history_freight_status" type="char"  defaultValue="0" remarks="历史未支付运费订单"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="201906201606001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="auth_time" type="datetime"  remarks="临时权限时间"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20190080619501" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="company_id" type="varchar(20)"  remarks="所属公司"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20190918164601" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="logistics_mode" type="char(1)"  defaultValue="0" remarks="物流方式，0京东，1仓库"></column>
+        </addColumn>
+    </changeSet>
+
+<!--    <changeSet id="201910091652001" author="xb.wu">-->
+<!--        <setColumnRemarks tableName="mall_order_info" columnName="logistics_mode" remarks="物流方式，0京东，1顺丰，2仓库" />-->
+<!--    </changeSet>-->
+
+    <changeSet id="2019101010106001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="provincial_urban_area" type="text"   remarks="省市区"></column>
+            <column name="street" type="text" remarks="街道"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2019110810106002" author="">
+        <addColumn tableName="mall_order_to_push">
+            <column name="order_origin" type="int(2)" defaultValue="0" remarks="订单来源，0产品商城，1商品商城，2活动订单"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="201911191612001" author="wuxb">
+        <createTable tableName="sms_record_hits" remarks="短信营销记录点击量">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="pid" type="varchar(20)" remarks="父级id"/>
+            <column name="phone" type="varchar(20)" remarks="手机号"/>
+            <column name="state" type="tinyint(1)" defaultValue="1" remarks="渠道，0:App渠道，1:短信营销渠道"/>
+            <column name="create_time" type="datetime" remarks="创建时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="201911191612002" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="channel_state" type="tinyint(1)" defaultValue="0" remarks="渠道，0:App渠道，1:短信营销渠道"/>
+            <column name="subordinate_id" type="varchar(20)" remarks="下级用户id"/>
+            <column name="ac_verify_id" type="varchar(20)" remarks="短信营销审核单id"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="201911191612003" author="wuxb">
+        <createTable tableName="sms_ac_order_verify" remarks="短信营销申请单">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="proposer_id" type="varchar(20)" remarks="申请人id"/>
+            <column name="accepter_id" type="varchar(20)" remarks="审核人id"/>
+            <column name="verify_status" type="tinyint(1)" defaultValue="0" remarks="审核状态，0待审核，1审核通过，2审核不通过，3审核过期，4取消"/>
+            <column name="total_amt" type="decimal(8,2)" remarks="总金额"/>
+            <column name="freight_amt" type="decimal(8,2)" remarks="运费"/>
+            <column name="create_date" type="datetime" remarks="提审时间"/>
+            <column name="verify_date" type="datetime" remarks="审核时间"/>
+            <column name="order_id" type="varchar(20)" remarks="订单号"/>
+            <column name="logistics_mode" type="char(1)" remarks="物流方式"/>
+            <column name="state" type="tinyint(1)" defaultValue="1" remarks="渠道，0:App渠道，1:短信营销渠道"/>
+            <column name="province" type="varchar(50)" remarks="省" />
+            <column name="city" type="varchar(50)" remarks="市" />
+            <column name="area" type="varchar(100)" remarks="区" />
+            <column name="street" type="text" remarks="街道"/>
+            <column name="recipient_name" type="varchar(50)" remarks="收件人姓名"/>
+            <column name="recipient_phone" type="varchar(20)" remarks="收件人手机号"/>
+            <column name="remark" type="text" remarks="备注"/>
+            <column name="verify_remark" type="text" remarks="审核备注"/>
+            <column name="verify_end_date" type="datetime" remarks="最后审核时间，用于判断是否过期"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="201911191612004" author="wuxb">
+        <createTable tableName="sms_ac_order_item" remarks="短信营销申请商品信息">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="verify_id" type="varchar(20)" remarks="审核单id"/>
+            <column name="sku_code" type="varchar(200)" remarks="sku"/>
+            <column name="number" type="int(6)" remarks="数量"/>
+            <column name="create_date" type="datetime" remarks="创建时间"/>
+            <column name="price" type="decimal(8,2)" remarks="价格"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="2019121314130001" author="wuxb">
+        <createTable tableName="sms_ac_evaluate" remarks="评价">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="varchar(20)" remarks="用户id"/>
+            <column name="age" type="int(2)" remarks="年龄"/>
+            <column name="sex" type="tinyint" defaultValue="1" remarks="性别0男，1女"/>
+            <column name="skin_texture" type="varchar(50)" remarks="肤质"/>
+            <column name="grade" type="tinyint(1)" remarks="打分"/>
+            <column name="is_repeat_purchase" type="char(1)" defaultValue="0" remarks="是否会继续购买浮美产品:0否1是"/>
+            <column name="evaluate" type="text" remarks="评价（map类型）6到14的问题对应"/>
+            <column name="create_date" type="datetime" remarks="创建时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2019020820350001" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="pay_type" type="char(1)" remarks="支付方式 1余额2微信3支付宝"/>
+            <column name="remark1" type="varchar(255)" remarks="支付方式 1余额2微信3支付宝"/>
+<!--            <column name="remark2" type="varchar(255)" remarks="支付方式 1余额2微信3支付宝"/>-->
+<!--            <column name="remark3" type="varchar(255)" remarks="支付方式 1余额2微信3支付宝"/>-->
+        </addColumn>
+    </changeSet>
+    <changeSet id="2019020820350002" author="xb.wu">
+        <addColumn tableName="mall_order_info">
+            <column name="qm_type" type="char(1)" defaultValue="0" remarks="0未入库，1已入库，2已推单，3已发货"/>
+            <column name="is_only_20" type="char(1)" defaultValue="0" remarks="1,仅只有消毒液"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020021214020001" author="chen">
+        <addColumn tableName="mall_order_info">
+            <column name="split_flag" type="char(1)" defaultValue="0" remarks="拆单标识：0未拆单，1已拆单"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020021711230001" author="wuxb">
+        <createTable tableName="express_company" remarks="快递公司">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="company_name" type="varchar(20)" remarks="快递名称"/>
+            <column name="code" type="varchar(20)" remarks="编码"/>
+            <column name="company_code" type="varchar(20)" remarks="编码"/>
+            <column name="sort" type="tinyint" defaultValue="0" remarks="排序"/>
+            <column name="create_date" type="datetime" remarks="创建时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2020021711230002" author="wuxb">
+        <sql>
+            insert into express_company (id,company_name,code,sort,create_date) values (1,'京东','0','2', now());
+            insert into express_company (id,company_name,code,sort,create_date) values (2,'新亦源','1','1', now());
+            insert into express_company (id,company_name,code,sort,create_date) values (3,'仓库','2','3', now());
+            insert into express_company (id,company_name,code,sort,create_date) values (4,'无忧','3','4', now());
+            insert into express_company (id,company_name,code,sort,create_date) values (5,'今日','4','5', now());
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020021711230003" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="items_package" type="text" remarks="多包裹"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020021711230004" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="logistics_type" type="char(1)" defaultValue="0" remarks="0京东，1顺丰"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020021914020001" author="chen">
+        <addColumn tableName="mall_order_info">
+            <column name="close_date" type="datetime" remarks="订单关闭时间"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="202002251514001" author="wzpeng">
+        <createIndex tableName="mall_order_info" indexName="idx_express_company">
+            <column name="express_company"/>
+        </createIndex>
+        <createIndex tableName="mall_order_info" indexName="idx_express_code">
+            <column name="express_code"/>
+        </createIndex>
+    </changeSet>
+
+
+
+    <!--<changeSet id="20190208203500012" author="liuliang">-->
+        <!--<addColumn tableName="mall_order_info_000">-->
+            <!--<column name="pay_type" type="char(1)" remarks="支付方式 1余额2微信3支付宝"/>-->
+            <!--<column name="remark1" type="varchar(255)" remarks="支付方式 1余额2微信3支付宝"/>-->
+            <!--&lt;!&ndash;            <column name="remark2" type="varchar(255)" remarks="支付方式 1余额2微信3支付宝"/>&ndash;&gt;-->
+            <!--&lt;!&ndash;            <column name="remark3" type="varchar(255)" remarks="支付方式 1余额2微信3支付宝"/>&ndash;&gt;-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+    <!--<changeSet id="2019020820350012" author="liuliang">-->
+        <!--<addColumn tableName="mall_order_info_000">-->
+            <!--<column name="qm_type" type="char(1)" defaultValue="0" remarks="0未入库，1已入库，2已推单，3已发货"/>-->
+            <!--<column name="is_only_20" type="char(1)" defaultValue="0" remarks="1,仅只有消毒液"/>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="2020021214020012" author="liuliang">-->
+        <!--<addColumn tableName="mall_order_info_000">-->
+            <!--<column name="split_flag" type="char(1)" defaultValue="0" remarks="拆单标识：0未拆单，1已拆单"/>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="2020021711230012" author="liuliang">-->
+        <!--<addColumn tableName="mall_order_info_000">-->
+            <!--<column name="items_package" type="text" remarks="多包裹"/>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="2020021711230012" author="liuliang">-->
+        <!--<addColumn tableName="mall_order_info_000">-->
+            <!--<column name="logistics_type" type="char(1)" defaultValue="0" remarks="0京东，1顺丰"/>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="2020021914020012" author="liuliang">-->
+        <!--<addColumn tableName="mall_order_info_000">-->
+            <!--<column name="close_date" type="datetime" remarks="订单关闭时间"/>-->
+        <!--</addColumn>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="202002251514012" author="liuliang">-->
+        <!--<createIndex tableName="mall_order_info_000" indexName="idx_express_company">-->
+            <!--<column name="express_company"/>-->
+        <!--</createIndex>-->
+        <!--<createIndex tableName="mall_order_info_000" indexName="idx_express_code">-->
+            <!--<column name="express_code"/>-->
+        <!--</createIndex>-->
+    <!--</changeSet>-->
+
+    <changeSet id="2020041514210001" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="regulate_order" defaultValue="0" type="char(1)" remarks="是否为后台调剂生成的订单，0否，1是"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020041514210002" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="prohibit_edit" defaultValue="0" type="char(1)" remarks="是否禁用修改，0否，1是"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020041514210003" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="current_level" defaultValue="0" type="char(1)" remarks="当前等级"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020041514210004" author="wuxb">
+        <addColumn tableName="mall_order_info">
+            <column name="e_trade_no" type="varchar(30)" remarks="e支付单号"/>
+            <column name="locked" type="char(1)" defaultValue="0" remarks="是否锁定，1锁定"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="202005251143001" author="peng">
+        <addColumn tableName="mall_order_feedback">
+            <column name="express_code" type="varchar(50)" remarks="物流单号"/>
+            <column name="single_num" type="varchar(50)" remarks="出库单号"/>
+            <column name="after_sale_type" type="char(1)" defaultValue="0" remarks="售后方式 0不处理库存  1退回云库存 2补发"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="202005251345002" author="peng">
+        <sql>
+            DROP TABLE IF	EXISTS `m_mall_order`.`mall_feedback_goods`;
+            CREATE TABLE `mall_feedback_goods` (
+            `id` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '主键id',
+            `feedback_id` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单反馈id',
+            `sku_code` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'sku_code',
+            `order_amount` decimal(10,0) DEFAULT '0' COMMENT '订单数量',
+            `after_sale_amount` decimal(10,0) DEFAULT '0' COMMENT '售后数量',
+            `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+            `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+            `is_del` char(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '逻辑删除',
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单反馈商品详情';
+        </sql>
+    </changeSet>
+    <changeSet id="2020061111530001" author="xb">
+        <addColumn tableName="mall_order_item">
+            <column name="serial_number" type="text" remarks="序列化"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="202007151047001" author="xb">
+        <addColumn tableName="mall_order_item">
+            <column name="security_number" type="text" remarks="序列化"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

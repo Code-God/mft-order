@@ -1,0 +1,591 @@
+[33mcommit c51f5ea45ea5b473886ff8fac98d4908ea90ab4a[m[33m ([m[1;36mHEAD -> [m[1;32mmall_order_dev[m[33m)[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Fri Mar 29 16:45:45 2019 +0800
+
+    订单审核时间查询
+
+[33mcommit be6e1a6b8e1ace385d1059303bb2f93011b2458c[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Fri Mar 29 13:59:56 2019 +0800
+
+    交易流水-优化
+
+[33mcommit 0acbe6bc70bd5181ddca2dafad6a90bdc9a24553[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Fri Mar 29 13:07:43 2019 +0800
+
+    交易流水-优化
+
+[33mcommit 585ddcac9fefe229bb260181d2e81f5b70295b08[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Fri Mar 29 11:47:58 2019 +0800
+
+    交易流水日志打印
+
+[33mcommit 18376dd69485a152537ed12c8f89b36a8d8c8b15[m
+Merge: 4dd6222 83f7143
+Author: wangzhenpeng <772405537Wzp>
+Date:   Fri Mar 29 09:50:42 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 4dd6222e9bba14a0e409b8e44df758eba4ae1c9e[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Fri Mar 29 09:50:26 2019 +0800
+
+    查询代理升级的订单的商品总数
+
+[33mcommit 83f71436a3943ffbed350420fe5ced5934441245[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 28 20:06:05 2019 +0800
+
+    1
+
+[33mcommit aab5800c41a93ad40480bcb5d6ee56571bf442ad[m
+Merge: 766f831 a3ca417
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 28 19:27:43 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 766f83106643b74c1e2077149dd8bac3f9c5cb57[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 28 19:27:32 2019 +0800
+
+    1
+
+[33mcommit a3ca417fab80da163f5c5537f34d0cf6136a5b2c[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:47:46 2019 +0800
+
+    删除之前配置的主从数据库
+
+[33mcommit 28ba8b9805b966baeda8c32bbbbf584fed72ccf8[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:45:11 2019 +0800
+
+    111
+
+[33mcommit 4e6756c55a3e571f2cb4aa94bc3d823807f85fc4[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:43:24 2019 +0800
+
+    111
+
+[33mcommit f9413cb4c9d3bdb5c0a6f80a99cada2b9762d511[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:40:53 2019 +0800
+
+    111
+
+[33mcommit 18b06860daa2dbd26443dd158e1c1f2ad7a82f4e[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:40:19 2019 +0800
+
+    111
+
+[33mcommit a274a17b3773c3b123943c43ff51e8d15efc0354[m
+Merge: ee3bef2 60e8d81
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:15:23 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit ee3bef238ed32d8f23a24c21bdc502491483806d[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 17:15:08 2019 +0800
+
+    111
+
+[33mcommit 60e8d81b6adfe5fc038543e4bf8223d828c06357[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Thu Mar 28 16:24:17 2019 +0800
+
+    查询代理升级的订单的商品总数
+
+[33mcommit a2adaebe3bca5f68478571ee1c1e6675a2c11539[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 28 15:31:03 2019 +0800
+
+    1
+
+[33mcommit 47ec02d186999ae58889584a81b33b3ce05255a4[m
+Merge: 89d2be9 64fc8fc
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 28 10:59:32 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 89d2be9163549cf4a34ac05e046ac6d73c6ba69b[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 28 10:59:18 2019 +0800
+
+    1
+
+[33mcommit 64fc8fce50bbdc9fcfff403cbdbbae7666bfb243[m
+Merge: 9e0050d dea99d3
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 09:34:00 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 9e0050d997aab40649815378c59ee39fa5233ee3[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 28 09:33:51 2019 +0800
+
+    111
+
+[33mcommit dea99d3cf7fc21a5e315c2009ea3db7ad7921942[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 27 17:20:56 2019 +0800
+
+    1
+
+[33mcommit c4b8f35f0868547d7411c3964547f1c96e0e56c1[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 27 16:55:57 2019 +0800
+
+    1
+
+[33mcommit 13f7ec11aa31b3c63e87046983203b2f62ba4db0[m
+Merge: 9bd5b28 c035986
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 27 16:21:58 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 9bd5b280b748930b895c8cec112d00d00bb8dcc2[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 27 16:21:51 2019 +0800
+
+    1
+
+[33mcommit c0359869f81f08fb96d22b55cabff68fa09cc6bb[m
+Merge: 9ed848d 4322a09
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Wed Mar 27 15:32:42 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 9ed848d32a13639e9d7112edec7f1f209660d0a8[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Wed Mar 27 15:32:28 2019 +0800
+
+    111
+
+[33mcommit 4322a093e40d7009e7c0fb7851c4093c2644cd70[m
+Merge: cc6912a f00485d
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 26 19:29:55 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit cc6912a1fd0c85285b4e2b7ec14a63ffc4f325d1[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 26 19:29:43 2019 +0800
+
+    1
+
+[33mcommit f00485dd166c4e7496324f77aa54646ebbd50579[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 26 09:52:09 2019 +0800
+
+    111
+
+[33mcommit ae74cc96fc59177bb13a53a418ac8a02dc2b5717[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 26 09:51:54 2019 +0800
+
+    111
+
+[33mcommit 20472014fc680f7c53368b04ef613e5bf18d15a7[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 26 09:50:53 2019 +0800
+
+    111
+
+[33mcommit 79900ee33bf73bfe5a5d5589b75a3b87efa0fe93[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 26 09:32:32 2019 +0800
+
+    111
+
+[33mcommit 3e822ad003f9f9f59472f7a1a64144adbca85dc4[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Mon Mar 25 20:27:38 2019 +0800
+
+    111
+
+[33mcommit 8d23d57c8b3c856304deedec7d5ba4d12c05db1f[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Mon Mar 25 20:07:53 2019 +0800
+
+    111
+
+[33mcommit de2192a6794922da32c899ae6cb469aa148ddac6[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Mon Mar 25 20:06:59 2019 +0800
+
+    111
+
+[33mcommit e6caad1004ef210361b8714054421cb2ca00849a[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Mon Mar 25 15:16:53 2019 +0800
+
+    111
+
+[33mcommit 40c033542c1cabf98c2145ef43b6e4e80ac797a1[m
+Merge: 4b1501d b32ebbc
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Mon Mar 25 15:15:25 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 4b1501dd856a4bfdf3f7f2bec110354da4b95407[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Mon Mar 25 15:15:03 2019 +0800
+
+    111
+
+[33mcommit b32ebbcc4daa0120b181cb5a439beb5916c90a1e[m
+Merge: 59f4374 240c3a4
+Author: wuxb <mrwuxb@163.com>
+Date:   Sat Mar 23 14:33:09 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 59f4374e140f2a38447885ba5481b77ec6495c6a[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Sat Mar 23 14:32:54 2019 +0800
+
+    1
+
+[33mcommit 240c3a452b3535e1bd7d69d56eeff57ff9d31631[m
+Merge: 95d2d56 74ca57d
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Sat Mar 23 12:44:52 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 95d2d564f851f7845a73ad672b4963505510ba7a[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Sat Mar 23 12:44:43 2019 +0800
+
+    111
+
+[33mcommit 74ca57de1b10808d8ab65b0bb3bedf5426cb8a73[m
+Merge: 112e889 5dd82a3
+Author: wuxb <mrwuxb@163.com>
+Date:   Sat Mar 23 11:11:44 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 112e8897125eb87dc3ce1b2e84f7facbe812227e[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Sat Mar 23 11:11:31 2019 +0800
+
+    1
+
+[33mcommit 5dd82a345c7ea4e750658a353ace8b9b03509a46[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Fri Mar 22 14:38:14 2019 +0800
+
+    111
+
+[33mcommit 69f2b14eb568ccfcb55419d68e8663a5a2ca179c[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Fri Mar 22 14:35:59 2019 +0800
+
+    111
+
+[33mcommit dabbf5b311e915bb8258bed831132467e3bbf0fe[m
+Merge: 6b6fc1d e21ab1a
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Fri Mar 22 14:03:00 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 6b6fc1d0e83aed31b474a8114054f93efe2f7aaf[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Fri Mar 22 14:02:46 2019 +0800
+
+    111
+
+[33mcommit e21ab1a5ec8d652065a670637ab932fb76427313[m
+Merge: a6a7036 1938905
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 21 17:07:38 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit a6a70365e2f3b9a9e8fa0994d6d7cb38cef96f4d[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 21 17:07:28 2019 +0800
+
+    1
+
+[33mcommit 1938905d69d2ecf1c38953e97158404145426a20[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Thu Mar 21 12:00:59 2019 +0800
+
+    111
+
+[33mcommit f9fbaadb0c448729db578fd9c1f306f8b4be6d7b[m
+Merge: a9aa84f e354819
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 21 10:58:06 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit a9aa84f3f3dea3b43b021666e02a846b1bd127a4[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 21 10:58:00 2019 +0800
+
+    1
+
+[33mcommit 8bd4db4f028286f4e50c0845676d32a01d103c4a[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Thu Mar 21 10:56:39 2019 +0800
+
+    1
+
+[33mcommit e354819e777f80d832b1f6d2cc56d6d3b952d007[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Thu Mar 21 09:48:50 2019 +0800
+
+    后台订单管理sql优化
+
+[33mcommit 5db83332a8f18622502f89b5457a518d3b5f3213[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Wed Mar 20 20:37:19 2019 +0800
+
+    111
+
+[33mcommit 5ef00b63fa02aa966a5b4e5d599360ba9f4d96d4[m
+Merge: dd35809 1fbbdbd
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 20:33:38 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+    
+    # Conflicts:
+    #       order-web/src/main/java/com/meifute/core/mapper/persistence/MallOrderInfoMapper.xml
+    #       order-web/src/main/java/com/meifute/core/service/MallOrderInfoService.java
+
+[33mcommit dd3580950fa8d4cfbc8e22ed5783ddb26b3b2ff6[m
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 20:28:24 2019 +0800
+
+    1
+
+[33mcommit 2050b1c9e8835b419230e15abc28cd6030c711ec[m
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 20:21:45 2019 +0800
+
+    1
+
+[33mcommit 1fbbdbde146415528a680e8deea7cb8e64a8b280[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Wed Mar 20 20:01:17 2019 +0800
+
+    后台订单管理sql优化
+
+[33mcommit 8f38b830990d8494ab4a3a0f5121f2ef10dce04e[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Wed Mar 20 19:43:45 2019 +0800
+
+    后台订单管理sql优化
+
+[33mcommit aef42d54cf73c835aa03c1c14d1aab9a2def5e57[m
+Merge: 8139069 44e2e3e
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 17:58:22 2019 +0800
+
+    Merge remote-tracking branch 'remotes/origin/mall_order_dev' into mall_order_dev
+
+[33mcommit 8139069cdf598ce8e70ac726adac19524fe3309a[m
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 17:58:01 2019 +0800
+
+    1
+
+[33mcommit 44e2e3e26d685f2c3dd4d695ed9d5a62d2d0076a[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 20 17:49:56 2019 +0800
+
+    1
+
+[33mcommit abbef939de2252d8e01e24e4f7d30c876ca4c33f[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 20 17:10:51 2019 +0800
+
+    1
+
+[33mcommit be300244e6ac40067b4d104c640f72a530101c86[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 20 16:25:09 2019 +0800
+
+    1
+
+[33mcommit 726959bdabbabe15172ca747c9b3cd75cc344122[m
+Merge: 4ec42ef 5a5c31d
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 20 16:00:43 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 4ec42ef7970c94f95552f64f58a57fc96a0f3dea[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 20 16:00:32 2019 +0800
+
+    1
+
+[33mcommit 905bf88fae36bfd7a50e55e5836b73e04b6af935[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Wed Mar 20 15:59:36 2019 +0800
+
+    1
+
+[33mcommit 5a5c31d5ea5860da1c9e4625df7bfce71a68afc4[m
+Merge: 44965a7 197f6ac
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 15:36:40 2019 +0800
+
+    Merge remote-tracking branch 'remotes/origin/mall_order_dev' into mall_order_dev
+
+[33mcommit 44965a77f1cb2976cda1f45cc94d04b6f618b143[m
+Author: 陈向 <985699062@qq.com>
+Date:   Wed Mar 20 15:36:16 2019 +0800
+
+    upd
+
+[33mcommit 197f6ac071e86bef1022082585866d6c96f818ca[m
+Merge: 06fff21 f2e83e5
+Author: wangzhenpeng <772405537Wzp>
+Date:   Wed Mar 20 10:14:15 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 06fff218ac758e2daaa9e0e08c2f9e471dbc9873[m
+Author: wangzhenpeng <772405537Wzp>
+Date:   Wed Mar 20 10:14:11 2019 +0800
+
+    后台订单管理sql优化
+
+[33mcommit f2e83e50570cf073e0fb298fdaa9daeb476a434e[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 21:56:55 2019 +0800
+
+    111
+
+[33mcommit 92f8541ca7876d7b5a4e4ba665d5bf76291a06ad[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 21:34:52 2019 +0800
+
+    111
+
+[33mcommit 7ec19499cf992efa8c5b1a0e813079e65007b04f[m
+Merge: 4f33122 3361738
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 21:30:39 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 4f331229a2a14edb30f1ea4b6e35f9b70b1cca01[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 21:30:20 2019 +0800
+
+    111
+
+[33mcommit 3361738ee94f94c2ae61db5af0567900ba184c30[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 19 21:08:07 2019 +0800
+
+    1
+
+[33mcommit f0d885b1fb430f6a2810a1d7e723fcf42d6029ff[m
+Merge: a56a0a1 7120791
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:45:44 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit a56a0a182e728444775ede735a48709fbc0e49a2[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:45:36 2019 +0800
+
+    111
+
+[33mcommit 712079190819cee864746103109452716cc0e353[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 19 20:36:30 2019 +0800
+
+    1
+
+[33mcommit e1d5db1ab8925c31eaaddbfe9438eadf2bb8518c[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:23:46 2019 +0800
+
+    111
+
+[33mcommit 4e642ecada04d10a975aabbebf1fa30d18031e1d[m
+Merge: 14b8d1a 9cd12f8
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:21:04 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 14b8d1ab48178adf9a2112c93aa92c272d90ef3e[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:20:54 2019 +0800
+
+    111
+
+[33mcommit 9cd12f804a4bb9df81810f726da5ca2f20ac0ac6[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 19 20:18:44 2019 +0800
+
+    1
+
+[33mcommit 5c1131bdff33ac3d4fc1f8febed5d57c00845359[m
+Merge: 9524dd7 8580ef0
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 19 20:10:28 2019 +0800
+
+    Merge branch 'mall_order_dev' of https://gitee.com/meifute/m-mall-order into mall_order_dev
+
+[33mcommit 9524dd77edc04dda11ccbd8a37d2acbff664ba2b[m
+Author: wuxb <mrwuxb@163.com>
+Date:   Tue Mar 19 20:10:05 2019 +0800
+
+    1
+
+[33mcommit 8580ef0ac811847ea933ad62b9dcf19b78f7ef88[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:09:12 2019 +0800
+
+    111
+
+[33mcommit 76c25cf0bc23a2672be14b86fd1e5ed06f62e766[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 20:05:42 2019 +0800
+
+    111
+
+[33mcommit 454fbc1d9130a6d0ca8ad1fe81ef90b180793009[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 19:59:36 2019 +0800
+
+    111
+
+[33mcommit fd2bcdf3bfb2cc72517675b7cf350a790d6a7bb7[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 19:57:12 2019 +0800
+
+    111
+
+[33mcommit 6da6da2b88b9d7d37fb76663179dadef69662d95[m
+Author: iamcrawler <iamcrawler@sina.com>
+Date:   Tue Mar 19 19:55:08 2019 +0800
+
+    111

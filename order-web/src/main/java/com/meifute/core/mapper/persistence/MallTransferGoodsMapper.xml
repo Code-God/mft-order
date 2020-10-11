@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallTransferGoodsMapper">
+
+    <select id="queryTransferGoodsPageList" parameterType="com.meifute.core.entity.MallTransferGoods"
+            resultType="com.meifute.core.entity.MallTransferGoods">
+        SELECT m.id, m.title, m.mall_user_id as mallUserId, m.next_proxy_id as nextProxyId, m.item_id as itemId,
+        m.sku_code as skuCode, m.amount, m.relation_id as relationId, m.relation_type as relationType,
+        m.create_date as createDate, m.update_date as updateDate, m.type, m.status, m.memo, m.is_del as isDel
+        FROM mall_transfer_goods m
+        where
+         m.is_del='0'
+        <if test="param.relationId != null ">
+            AND m.relation_id=#{param.relationId}
+        </if>
+        <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+            AND m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="mallUserId"
+                     index="index">
+                #{mallUserId, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="param.nextProxyIdList != null  and param.nextProxyIdList.size() > 0">
+            AND  m.next_proxy_id in
+            <foreach collection="param.nextProxyIdList" open="(" close=")" separator="," item="nextProxyId"
+                     index="index">
+                #{nextProxyId, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="param.startDate != null ">
+            AND  m.create_date &gt;= #{param.startDate}
+        </if>
+
+        <if test="param.endDate != null">
+            and m.create_date &lt;= #{param.endDate}
+        </if>
+        group by m.relation_id
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="getTransferGoodsPageList" parameterType="com.meifute.core.vo.GetOrderTransferPageListParam" resultType="com.meifute.core.entity.MallTransferGoods">
+        SELECT m.id, m.title, m.mall_user_id as mallUserId, m.next_proxy_id as nextProxyId, m.item_id as itemId,
+                m.sku_code as skuCode, m.amount, m.relation_id as relationId, m.relation_type as relationType,
+                 m.create_date as createDate, m.update_date as updateDate, m.type, m.status, m.memo, m.is_del as isDel,b.company_name companyName
+        FROM
+            m_mall_order.mall_transfer_goods m,
+            m_mall_user.mall_user u,
+            m_mall_user.mall_user nu,
+            m_mall_agent.mall_agent a,
+            m_mall_agent.mall_branch_office b
+        WHERE
+            m.is_del = '0'
+            and m.mall_user_id = u.id
+            and m.next_proxy_id = nu.id
+            and m.mall_user_id = a.user_id
+            and a.company_id = b.id
+        <if test="param.orderId != null and param.orderId != ''">
+              and  m.relation_id=#{param.orderId}
+            </if>
+            <if test="param.outPhone != null and param.outPhone != ''">
+                and u.phone like CONCAT(#{param.outPhone},'%')
+            </if>
+            <if test="param.outNickName != null and param.outNickName != ''">
+                and u.nick_name like CONCAT('%',#{param.outNickName},'%')
+            </if>
+            <if test="param.outName != null and param.outName != ''">
+                and u.name like CONCAT('%',#{param.outName},'%')
+            </if>
+
+            <if test="param.recivePhone != null and param.recivePhone != ''">
+                and nu.phone like CONCAT(#{param.recivePhone},'%')
+            </if>
+            <if test="param.reciveNickName != null and param.reciveNickName != ''">
+                and nu.nick_name like CONCAT('%',#{param.reciveNickName},'%')
+            </if>
+            <if test="param.reciveName != null and param.reciveName != ''">
+                and nu.name like CONCAT('%',#{param.reciveName},'%')
+            </if>
+            <if test="param.startDate != null ">
+                AND  m.create_date &gt;= #{param.startDate}
+            </if>
+
+            <if test="param.endDate != null">
+                and m.create_date &lt;= #{param.endDate}
+            </if>
+
+            group by m.relation_id
+            ORDER BY m.create_date desc
+    </select>
+
+
+    <select id="sumItem" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+        SELECT
+            sum( amount )
+        FROM
+            m_mall_order.mall_transfer_goods
+        WHERE
+            relation_id = #{relationId};
+    </select>
+    <delete id="updateByOrderId" parameterType="com.meifute.core.entity.MallTransferGoods">
+         UPDATE mall_transfer_goods set memo  = #{param.memo} where relation_id = #{param.relationId}
+    </delete>
+
+</mapper>

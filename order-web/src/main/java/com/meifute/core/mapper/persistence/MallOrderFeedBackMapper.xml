@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallOrderFeedBackMapper">
+    <resultMap id="baseResultMap" type="com.meifute.core.entity.MallOrderFeedBack">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <id property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <id property="feedBackType" column="feedback_type" jdbcType="VARCHAR"/>
+        <id property="feedbackDetail" column="feedback_detail" jdbcType="VARCHAR"/>
+        <id property="feedbackImage" column="feedback_image" jdbcType="VARCHAR"/>
+        <id property="feedbackPerson" column="feedback_person" jdbcType="VARCHAR"/>
+        <id property="feedbackPersonLeader" column="feedback_person_leader" jdbcType="VARCHAR"/>
+        <id property="feedbackAdmin" column="feedback_admin" jdbcType="VARCHAR"/>
+        <id property="status" column="status" jdbcType="VARCHAR"/>
+        <id property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <id property="remark" column="remark" jdbcType="VARCHAR"/>
+        <id property="expressCode" column="express_code" jdbcType="VARCHAR"/>
+        <id property="afterSaleType" column="after_sale_type" jdbcType="VARCHAR"/>
+        <id property="adminCode" column="admin_code" jdbcType="VARCHAR"/>
+        <id property="name" column="name" jdbcType="VARCHAR"/>
+        <id property="phone" column="phone" jdbcType="VARCHAR"/>
+        <id property="level" column="role_id" jdbcType="VARCHAR"/>
+        <id property="leaderName" column="leaderName" jdbcType="VARCHAR"/>
+        <id property="leaderPhone" column="leaderPhone" jdbcType="VARCHAR"/>
+        <id property="leaderLevel" column="leaderLevel" jdbcType="VARCHAR"/>
+        <collection property="questionList" ofType="com.meifute.core.entity.MallFeedBackQuestion">
+            <id property="id" column="questionId" jdbcType="VARCHAR"/>
+            <result property="feedBackId" column="feedback_id" jdbcType="VARCHAR"/>
+            <result property="question" column="question" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="product" column="product" jdbcType="VARCHAR"/>
+            <result property="amount" column="amount" jdbcType="VARCHAR"/>
+            <result property="createDate" column="questionCreateDate" jdbcType="TIMESTAMP"/>
+            <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectPageByParam" resultMap="baseResultMap">
+        SELECT
+        fe.id,
+        fe.order_id ,
+        fe.feedback_type ,
+        fe.feedback_detail ,
+        fe.feedback_image ,
+        fe.feedback_person,
+        fe.feedback_person_leader,
+        fe.feedback_admin ,
+        fe.status status,
+        fe.create_date,
+        fe.remark,
+        fe.express_code,
+        fe.after_sale_type,
+        ag.admin_code,
+        u.name,
+        u.phone,
+        u.role_id,
+        ( SELECT NAME FROM m_mall_user.mall_user WHERE id = fe.feedback_person_leader ) AS leaderName,
+        ( SELECT phone FROM m_mall_user.mall_user WHERE id = fe.feedback_person_leader ) AS leaderPhone,
+        ( SELECT role_id FROM m_mall_user.mall_user WHERE id = fe.feedback_person_leader ) AS leaderLevel,
+        fq.id as questionId,
+        fq.feedback_id,
+        fq.question,
+        fq.description,
+        fq.product,
+        fq.amount,
+        fq.create_date as questionCreateDate,
+        fq.update_date
+        FROM
+        m_mall_order.mall_order_feedback fe
+        LEFT JOIN m_mall_order.mall_feedback_question fq ON fe.id = fq.feedback_id
+        LEFT JOIN m_mall_user.mall_user u ON fe.feedback_person = u.id
+        LEFT JOIN m_mall_admin.admin_agent ag ON u.id = ag.mall_user_id
+        WHERE
+        fe.is_del = '0'
+        <if test=" param.feedBackType != null and param.feedBackType != ''">
+            and fe.feedback_type = #{param.feedBackType}
+        </if>
+        <if test=" param.expressCode != null and param.expressCode != ''">
+            and fe.express_code = #{param.expressCode}
+        </if>
+        <if test=" param.phone != null and param.phone != ''">
+            and u.phone = #{param.phone}
+        </if>
+        <if test=" param.name != null and param.name != ''">
+            and u.NAME = #{param.name}
+        </if>
+        <if test=" param.orderId != null and param.orderId != ''">
+            and fe.order_id = #{param.orderId}
+        </if>
+        <if test=" param.status != null and param.status != ''">
+            and fe.STATUS = #{param.status}
+        </if>
+        <if test=" param.newQuestionTypeUnion != null and param.newQuestionTypeUnion != ''">
+            and fq.new_question_type = #{param.newQuestionTypeUnion}
+        </if>
+        <if test=" param.afterSaleType != null and param.afterSaleType != ''">
+            and fe.after_sale_type = #{param.afterSaleType}
+        </if>
+        <if test=" param.beginTime != null ">
+            and fe.create_date &gt;= #{param.beginTime}
+        </if>
+        <if test=" param.endTime != null">
+            and fe.create_date &lt;= #{param.endTime}
+        </if>
+        GROUP BY
+        fe.id
+        ORDER BY fe.create_date desc
+    </select>
+    <select id="doExportAboutFeedback" resultType="com.meifute.core.entity.MallOrderFeedBack">
+        SELECT
+        fe.id as id,
+        fe.order_id as orderId,
+        fe.feedback_type as feedBackType,
+        fe.feedback_detail as feedbackDetail,
+        fe.feedback_image as feedbackImage,
+        fe.feedback_person as feedbackPerson,
+        fe.feedback_person_leader as feedbackPersonLeader,
+        fe.feedback_admin feedbackAdmin,
+        fe.status status,
+        fe.create_date createDate,
+        fe.remark remark,
+        fe.express_code expressCode,
+        fe.after_sale_type afterSaleType,
+        ag.admin_code AS adminCode,
+        u.NAME,
+        u.phone,
+        u.role_id AS LEVEL,
+        ( SELECT NAME FROM m_mall_user.mall_user WHERE id = fe.feedback_person_leader ) AS leaderName,
+        ( SELECT phone FROM m_mall_user.mall_user WHERE id = fe.feedback_person_leader ) AS leaderPhone,
+        ( SELECT role_id FROM m_mall_user.mall_user WHERE id = fe.feedback_person_leader ) AS leaderLevel,
+        fq.new_question_type as newQuestionTypeUnion,
+        fe.remark AS remark,
+        fe.feedback_detail AS feedbackDetail ,
+        (SELECT title from m_mall_item.mall_sku WHERE sku_code = g.sku_code) as productTitle,
+        g.sku_code as skuCode,
+        g.after_sale_amount as afterSaleAmount
+        FROM
+        m_mall_order.mall_order_feedback fe
+        LEFT JOIN m_mall_order.mall_feedback_question fq ON fe.id = fq.feedback_id
+        LEFT JOIN m_mall_user.mall_user u ON fe.feedback_person = u.id
+        LEFT JOIN m_mall_admin.admin_agent ag ON u.id = ag.mall_user_id
+        left join m_mall_order.mall_feedback_goods g on fe.id = g.feedback_id
+        WHERE
+        fe.is_del = '0'
+        <if test=" param.feedBackType != null and param.feedBackType != ''">
+            and fe.feedback_type = #{param.feedBackType}
+        </if>
+        <if test=" param.phone != null and param.phone != ''">
+            and u.phone = #{param.phone}
+        </if>
+        <if test=" param.name != null and param.name != ''">
+            and u.NAME = #{param.name}
+        </if>
+        <if test=" param.orderId != null and param.orderId != ''">
+            and fe.order_id = #{param.orderId}
+        </if>
+        <if test=" param.status != null and param.status != ''">
+            and fe.STATUS = #{param.status}
+        </if>
+        <if test=" param.newQuestionTypeUnion != null and param.newQuestionTypeUnion != ''">
+            and fq.new_question_type = #{param.newQuestionTypeUnion}
+        </if>
+        <if test=" param.afterSaleType != null and param.afterSaleType != ''">
+            and fe.after_sale_type = #{param.afterSaleType}
+        </if>
+        <if test=" param.adminCode != null and param.adminCode != ''">
+            and ag.admin_code = #{param.adminCode}
+        </if>
+        <if test=" param.beginTime != null ">
+            and fe.create_date &gt;= #{param.beginTime}
+        </if>
+        <if test=" param.endTime != null">
+            and fe.create_date &lt;= #{param.endTime}
+        </if>
+        ORDER BY fe.create_date desc
+    </select>
+</mapper>
+

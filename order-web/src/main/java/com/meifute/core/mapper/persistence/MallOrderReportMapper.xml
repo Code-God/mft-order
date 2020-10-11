@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallOrderReportMapper">
+
+    <!-- 开启二级缓存 -->
+    <!-- 代理进货总量排名 -->
+    <select id="sortAgentTotalStockAmount" resultType="com.meifute.core.dto.report.AgentTotalAmountSortResponseDTO"
+            parameterType="com.meifute.core.dto.report.AgentTotalAmountSortRequest">
+        SELECT a.icon, a.name, a.phone, a.amount as stockSkuAmount, a.userId, (@i :=@i + 1) AS stockSort
+        FROM
+            (SELECT @i := 0) AS it,
+            (SELECT
+            t3.name,
+            t3.phone,
+            sum( ABS( t2.amount ) ) AS amount,
+            t1.mall_user_id AS userId ,
+            t3.icon
+        FROM
+            m_mall_order.mall_order_info t1,
+            m_mall_order.mall_order_item t2,
+            m_mall_user.mall_user t3
+        WHERE
+            t1.order_id = t2.order_id
+            AND t1.mall_user_id = t3.id
+            AND t1.is_del = '0'
+            AND t2.currency = '0'
+            AND t1.order_status = '5'
+            AND t1.order_type in ('0','1')
+            AND t2.sku_code not in ('P001','P002')
+            AND t1.payment_amt >0
+            AND t3.role_id = '4'
+            <if test="param.yearMonth != null">
+                AND CONCAT(YEAR(t1.create_date),'-',DATE_FORMAT(t1.create_date,'%m')) = #{param.yearMonth}
+            </if>
+
+            <if test="param.startTime != null">
+                AND t1.create_date &gt;= #{param.startTime}
+            </if>
+            <if test="param.endTime != null">
+                AND t1.create_date &lt;= #{param.endTime}
+            </if>
+            GROUP BY t1.mall_user_id  ORDER BY amount desc
+        ) a
+    </select>
+
+    <!--代理出货总量排名-->
+    <select id="sortAgentTotalShipmentAmount" resultType="com.meifute.core.dto.report.AgentTotalAmountSortResponseDTO"
+            parameterType="com.meifute.core.dto.report.AgentTotalAmountSortRequest">
+        SELECT a.icon, a.name, a.phone, a.amount as shipmentSkuAmount, a.userId, (@i :=@i + 1) AS shipmentSort
+        FROM
+        (SELECT @i := 0) AS it,
+        (SELECT
+        t3.name,
+        t3.phone,
+        sum( ABS( t2.amount ) ) AS amount,
+        t1.mall_user_id AS userId,
+        t3.icon
+        FROM
+        m_mall_order.mall_order_info t1,
+        m_mall_order.mall_order_item t2,
+        m_mall_user.mall_user t3
+        WHERE
+        t1.order_id = t2.order_id
+        AND t1.mall_user_id = t3.id
+        AND t1.is_del = '0'
+        AND t2.currency = '0'
+        AND t1.order_status = '5'
+        AND t1.order_type in ('0','2')
+        AND t2.sku_code not in ('P001','P002')
+        <if test="param.yearMonth != null">
+            AND CONCAT(YEAR(t1.create_date),'-',DATE_FORMAT(t1.create_date,'%m')) = #{param.yearMonth}
+        </if>
+
+        <if test="param.startTime != null">
+            AND t1.create_date &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null">
+            AND t1.create_date &lt;= #{param.endTime}
+        </if>
+        GROUP BY t1.mall_user_id  ORDER BY amount desc
+        ) a
+    </select>
+
+    <!--新增总代排名-->
+    <select id="sortNewGeneralAgent" resultType="com.meifute.core.dto.report.NewAgent.NewGeneralAgentSortResponseDTO">
+        SELECT
+            (@i :=@i + 1) AS sort,
+            t1.agentAmount,
+            (SELECT name from m_mall_user.mall_user u LEFT JOIN m_mall_agent.mall_agent ag ON ag.user_id = u.id WHERE ag.id = t1.parent_id ) as name,
+            (SELECT phone from m_mall_user.mall_user u LEFT JOIN m_mall_agent.mall_agent ag ON ag.user_id = u.id WHERE ag.id = t1.parent_id ) as phone,
+            (SELECT u.id from m_mall_user.mall_user u LEFT JOIN m_mall_agent.mall_agent ag ON ag.user_id = u.id WHERE ag.id = t1.parent_id ) as  userId,
+            t1.icon
+        FROM
+            (SELECT @i := 0) AS it,
+            (SELECT
+            count( ag.id ) AS agentAmount,
+            up.create_date,
+            u.icon,
+            u.phone,
+            u.id AS userId,
+            ag.parent_id
+        FROM
+            m_mall_agent.mall_agent_upgrade_log up
+            LEFT JOIN m_mall_agent.mall_agent ag ON ag.user_id = up.mall_user_id
+            LEFT JOIN m_mall_user.mall_user u  ON u.id = up.mall_user_id
+        WHERE
+            ag.agent_level >= 4
+            AND up.upgrade_after_lev = 4
+            AND up.is_del = 0
+            <if test="param.yearMonth != null">
+                AND CONCAT(YEAR(up.create_date),'-',DATE_FORMAT(up.create_date,'%m')) = #{param.yearMonth}
+            </if>
+
+            <if test="param.startTime != null">
+                AND up.create_date &gt;= #{param.startTime}
+            </if>
+            <if test="param.endTime != null">
+                AND up.create_date &lt;= #{param.endTime}
+            </if>
+        GROUP BY
+            ag.parent_id
+        ORDER BY
+            agentAmount DESC
+        ) t1
+    </select>
+
+
+    <!--新增总代排名导出-->
+    <select id="sortNewGeneralAgentReport" resultType="com.meifute.core.dto.report.NewAgent.NewGeneralAgentSortResponseDTO">
+        SELECT
+        (@i :=@i + 1) AS sort,
+        t1.agentAmount,
+        t1.name,
+        t1.phone,
+        t1.userId
+        FROM
+        (SELECT @i := 0) AS it,
+        (SELECT
+        count( ag.id ) AS agentAmount,
+        up.create_date,
+        u.name,
+        u.phone,
+        u.id AS userId
+        FROM
+        m_mall_agent.mall_agent_upgrade_log up
+        LEFT JOIN m_mall_agent.mall_agent ag ON ag.user_id = up.mall_user_id
+        LEFT JOIN m_mall_user.mall_user u  ON u.id = up.mall_user_id
+        WHERE
+        ag.agent_level >= 4
+        AND up.upgrade_after_lev = 4
+        AND up.is_del = 0
+        <if test="param.yearMonth != null">
+            AND CONCAT(YEAR(up.create_date),'-',DATE_FORMAT(up.create_date,'%m')) = #{param.yearMonth}
+        </if>
+
+        <if test="param.startTime != null">
+            AND up.create_date &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null">
+            AND up.create_date &lt;= #{param.endTime}
+        </if>
+        GROUP BY
+        ag.parent_id
+        ORDER BY
+        agentAmount DESC
+        ) t1
+    </select>
+
+    <!--新增总代排名前三名-->
+    <select id="sortNewGeneralAgentFirstThree" resultType="com.meifute.core.dto.report.NewAgent.NewGeneralAgentSortResponseDTO">
+        SELECT
+        (@i :=@i + 1) AS sort,
+        t1.agentAmount,
+        t1.name,
+        t1.phone,
+        t1.userId,
+        t1.icon
+        FROM
+        (SELECT @i := 0) AS it,
+        (SELECT
+        count( ag.id ) AS agentAmount,
+        up.create_date,
+        u.name,
+        u.phone,
+        u.id AS userId,
+        u.icon
+        FROM
+        m_mall_agent.mall_agent_upgrade_log up
+        LEFT JOIN m_mall_agent.mall_agent ag ON ag.user_id = up.mall_user_id
+        LEFT JOIN m_mall_user.mall_user u  ON u.id = up.mall_user_id
+        WHERE
+        ag.agent_level >= 4
+        AND up.upgrade_after_lev = 4
+        AND up.is_del = 0
+        <if test="param.yearMonth != null">
+            AND CONCAT(YEAR(up.create_date),'-',DATE_FORMAT(up.create_date,'%m')) = #{param.yearMonth}
+        </if>
+
+        <if test="param.startTime != null">
+            AND up.create_date &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null">
+            AND up.create_date &lt;= #{param.endTime}
+        </if>
+        GROUP BY
+        ag.parent_id
+        ORDER BY
+        agentAmount DESC
+        ) t1
+    </select>
+
+
+
+
+
+
+
+</mapper>

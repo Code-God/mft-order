@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallOrderItemMapper">
+
+    <!-- 开启二级缓存 -->
+
+
+    <update id="updateSplitCloudStockLog">
+
+        update m_mall_agent.mall_cloud_stock_log
+        set relation_id = #{newRelationId,jdbcType=VARCHAR}
+        WHERE
+        relation_id = #{oldRelationId,jdbcType=VARCHAR}
+        and item_id = #{itemId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="updateSerialNumber" resultType="java.lang.Integer">
+        update m_mall_order.mall_order_item
+        set serial_number = #{serialNumber}, security_number=#{securityNumber}
+        where id = #{id}
+    </select>
+
+    <select id="getOrderItemBySkuAndOrderId" resultType="java.lang.String">
+        select id from m_mall_order.mall_order_item where order_id = #{orderId} and sku_code = #{skuCode}
+    </select>
+
+    <select id="getItemSpec" resultType="com.meifute.core.entity.MallSkuSpec">
+        select id, sku_code as skuCode,  transport_goods_no as transportGoodsNo,
+         spec, unit, title, weight,`size`,transport_code as transportCode, relation_sku as relationSku,
+         structure_sku structureSku
+         from m_mall_item.mall_sku_spec
+         where is_del = '0'
+    </select>
+
+    <select id="getAddressIdByName" resultType="java.lang.String">
+        select id from m_mall_user.mall_user_address
+        where
+        mall_user_id = #{userId}
+        and `name` like concat('%',#{name},'%')
+    </select>
+
+    <select id="updateSerialNumberByBatechId" resultType="java.lang.Integer">
+        update m_mall_order.mall_order_item
+        set serial_number = #{serialNumber}, security_number=#{securityNumber}
+        where
+        id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id" index="index">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getIdByNullSecurityNumberAndSerialNumber" resultType="com.meifute.core.entity.MallOrderItem">
+        select id, serial_number serialNumber from mall_order_item
+        where
+        serial_number is not null
+        and serial_number &lt;&gt; '暂无溯源码'
+        and security_number is null
+    </select>
+
+</mapper>

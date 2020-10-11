@@ -1,0 +1,2867 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallOrderInfoMapper">
+
+    <!-- 开启二级缓存 -->
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.meifute.core.entity.MallOrderInfo">
+        <id column="order_id" property="orderId"/>
+        <result column="mall_user_id" property="mallUserId"/>
+        <result column="payment_amt" property="paymentAmt"/>
+        <result column="credit" property="credit"/>
+        <result column="origin_amt" property="originAmt"/>
+        <result column="post_fee_amt" property="postFeeAmt"/>
+        <result column="discount_amt" property="discountAmt"/>
+        <result column="currency" property="currency"/>
+        <result column="addr_id" property="addrId"/>
+        <result column="addr_name" property="addrName"/>
+        <result column="addr_phone" property="addrPhone"/>
+        <result column="order_type" property="orderType"/>
+        <result column="order_review" property="orderReview"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="belongs_code" property="belongsCode"/>
+        <result column="express_code" property="expressCode"/>
+        <result column="express_company" property="expressCompany"/>
+        <result column="leader_id" property="leaderId"/>
+        <result column="proof_path" property="proofPath"/>
+        <result column="buyer_memo" property="buyerMemo"/>
+        <result column="cs_memo" property="csMemo"/>
+        <result column="system_memo" property="systemMemo"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="verify_end_date" property="verifyEndDate"/>
+        <result column="pay_end_date" property="payEndDate"/>
+        <result column="is_del" property="isDel"/>
+        <result column="is_can_cancel" property="isCanCancel"/>
+    </resultMap>
+
+
+    <select id="getOrderVerifyByOrderId" resultType="com.meifute.core.entity.MallOrderVerify">
+        SELECT
+          ov.id AS id,
+          ov.order_id AS orderId,
+          ov.proposer_id AS proposerId,
+          ov.accepter_id AS accepterId,
+          ov.admin_id AS adminId,
+          ov.verify_type AS verifyType,
+          ov.verify_status AS verifyStatus,
+          ov.verify_memo AS verifyMemo,
+          ov.create_date AS createDate,
+          ov.update_date AS updateDate
+        FROM
+          mall_order_verify ov
+        WHERE ov.order_id = #{id}
+    </select>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        order_id, mall_user_id, payment_amt, credit, origin_amt, post_fee_amt, discount_amt, currency, addr_id, addr_name, addr_phone, order_type, order_review, order_status, belongs_code, express_code, express_company, leader_id, proof_path, buyer_memo, cs_memo, system_memo, create_date, update_date, verify_end_date, pay_end_date, is_del, is_can_cancel,deliver_goods_date
+    </sql>
+
+    <sql id="SQL_Column_List">
+        m.order_id, m.mall_user_id, m.payment_amt, m.credit, m.origin_amt, m.post_fee_amt, m.discount_amt, m.currency, m.addr_id, m.addr_name,
+        m.addr_phone, m.order_type, m.order_review, m.order_status, m.belongs_code, m.express_code, m.express_company, m.leader_id, m.proof_path,
+        m.buyer_memo, m.cs_memo, m.system_memo, m.create_date, m.update_date, m.verify_end_date, m.pay_end_date, m.is_del, m.is_can_cancel
+    </sql>
+
+
+    <select id="queryOrderInfoListByPages" resultType="com.meifute.core.entity.MallOrderInfo"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+
+        SELECT m.order_id AS orderId, m.mall_user_id AS mallUserId, m.payment_amt AS paymentAmt, m.currency AS currency,
+        m.credit AS credit
+        , m.origin_amt AS originAmt, m.post_fee_amt AS postFeeAmt, m.discount_amt AS discountAmt, m.addr_id AS addrId,
+        m.order_type AS orderType
+        , m.express_code AS expressCode, m.belongs_code AS belongsCode, m.leader_id AS leaderId, m.proof_path AS
+        proofPath, m.buyer_memo AS buyerMemo
+        , m.cs_memo AS csMemo, m.create_date AS createDate, m.update_date AS updateDate, m.order_status AS orderStatus,
+        m.verify_end_date AS verifyEndDate
+        , m.pay_end_date AS payEndDate, m.is_del AS isDel, m.addr_name AS addrName, m.addr_phone AS addrPhone,
+        m.is_can_cancel AS isCanCancel
+        FROM m_mall_order.mall_order_info m
+        WHERE
+        m.order_type = '1'
+        AND
+        m.mall_user_id IN
+        (
+        SELECT
+        id
+        FROM
+        `m_mall_user`.`mall_user` u
+        <where>
+
+            <if test="param.phone != null">
+                u.phone LIKE #{param.phone}
+            </if>
+
+            <if test="param.name != null and param.name != ''">
+                and u.name LIKE #{param.name}
+            </if>
+
+            <if test="param.nickName != null">
+                and u.nick_name LIKE #{param.nickName}
+            </if>
+
+            <if test="param.roleIdList != null">
+                and u.role_id in
+                <foreach collection="param.roleIdList" open="(" close=")" separator="," item="item" index="index">
+                    #{item, jdbcType=CHAR}
+                </foreach>
+            </if>
+        </where>
+        )
+
+        <if test="param.addrPhone != null">
+            AND m.addr_phone LIKE #{param.addrPhone}
+        </if>
+        <if test="param.orderId != null">
+            AND m.order_id =#{param.orderId}
+        </if>
+        <if test="param.orderStatusList != null">
+            and m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        ORDER BY m.create_date DESC
+    </select>
+
+
+    <!--<select id="queryOrderInfoListByPages" resultType="com.meifute.core.entity.MallOrderInfo"-->
+    <!--parameterType="com.meifute.core.entity.MallOrderInfo">-->
+    <!--select m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as paymentAmt,m.currency as currency,-->
+    <!--m.credit as credit,-->
+    <!--m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,-->
+    <!--m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,-->
+    <!--m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,-->
+    <!--m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,-->
+    <!--m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as-->
+    <!--addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel-->
+    <!--FROM-->
+    <!--m_mall_order.mall_order_info m,-->
+    <!--m_mall_user.mall_user u-->
+    <!--<where>-->
+    <!--m.mall_user_id=u.id-->
+    <!--<if test="param.addrPhone != null">-->
+    <!--AND m.addr_phone LIKE #{param.addrPhone}-->
+    <!--</if>-->
+    <!--<if test="param.phone != null">-->
+    <!--AND u.phone LIKE #{param.phone}-->
+    <!--</if>-->
+    <!--<if test="param.name != null and param.name != ''">-->
+    <!--AND u.name LIKE #{param.name}-->
+    <!--</if>-->
+    <!--<if test="param.nickName != null">-->
+    <!--AND u.nick_name LIKE #{param.nickName}-->
+    <!--</if>-->
+    <!--<if test="param.roleIdList != null">-->
+    <!--and-->
+    <!--u.role_id in-->
+    <!--<foreach collection="param.roleIdList" open="(" close=")" separator="," item="item" index="index">-->
+    <!--#{item, jdbcType=CHAR}-->
+    <!--</foreach>-->
+    <!--</if>-->
+    <!--<if test="param.orderId != null">-->
+    <!--AND m.order_id =#{param.orderId}-->
+    <!--</if>-->
+    <!--<if test="param.orderStatusList != null">-->
+    <!--and m.order_status IN-->
+    <!--<foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">-->
+    <!--#{item, jdbcType=CHAR}-->
+    <!--</foreach>-->
+    <!--</if>-->
+    <!--and m.order_type='1'-->
+    <!--</where>-->
+    <!--order BY m.create_date DESC-->
+    <!--</select>-->
+
+    <select id="queryExchangeOrderInfoList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mall_order_info m
+        <where>
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                AND m.mall_user_id in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="param.orderId != null ">
+                AND m.order_id = #{param.orderId}
+            </if>
+            <if test="param.dateFrom != null ">
+                AND m.create_date &gt;= #{param.dateFrom}
+            </if>
+
+            <if test="param.dateTo != null">
+                and m.create_date &lt;= #{param.dateTo}
+            </if>
+            <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+                and m.order_status IN
+                <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                    #{item, jdbcType=CHAR}
+                </foreach>
+            </if>
+            <if test="param.orderStatus != null">
+                and m.order_status = #{param.orderStatus}
+            </if>
+            and m.order_type='3'
+        </where>
+        order BY m.create_date DESC
+    </select>
+
+    <select id="queryAllOrderInfoListPages" resultType="com.meifute.core.entity.MallOrderInfo"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        select m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as paymentAmt,m.currency as currency,
+        m.credit as credit,
+        m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,
+        m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,
+        m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,
+        m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,
+        m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as
+        addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel,m.deliver_goods_date as
+        deliverGoodsDate,m.confirm_goods_date as confirmGoodsDate,
+        m.is_can_jd as isCanJd,m.relation_order_id as relationOrderId ,express_company expressCompany,
+        m.provincial_urban_area as provincialUrbanArea, m.street as street, m.logistics_mode as logisticsMode,
+        m.close_date as closeDate, m.logistics_type as logisticsType,m.pay_type as payType,m.pay_date as payDate,
+        m.transaction_id as transactionId, m.trade_no as tradeNo, m.e_trade_no as eTradeNo
+        FROM
+        m_mall_order.mall_order_info m
+        where
+        m.currency='0'
+        and m.is_del = '0'
+        AND m.order_type not in('7')
+        <!--<if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">-->
+        <!--AND m.mall_user_id in-->
+        <!--<foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">-->
+        <!--#{item}-->
+        <!--</foreach>-->
+        <!--</if>-->
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.expressCode != null">
+            <!-- 有物流单号 -->
+            <if test="param.expressCode == '1'.toString()">
+                and length(m.express_code) &gt; 0
+                <!-- and m.express_code is not null and m.express_company is not null -->
+            </if>
+            <!-- 没有物流单号 -->
+            <if test="param.expressCode == '0'.toString()">
+                AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            </if>
+            <if test="param.expressCode != '1'.toString() and param.expressCode != '0'.toString()">
+                AND m.express_code = #{param.expressCode}
+            </if>
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.expressTimeout == '1'.toString()">
+            AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            AND m.order_status = '4'
+            AND TIMESTAMPDIFF(hour,m.deliver_goods_date,now()) &gt;= 24
+        </if>
+        <if test="param.itemId!=null and param.itemId !=''">
+            and
+            m.order_id in (
+            select
+            oi.order_id
+            from
+            m_mall_order.mall_order_info oi,
+            `m_mall_order`.`mall_order_item` oitem
+            where
+            oi.`order_id` = oitem.`order_id`
+            AND
+            oitem.`item_id` = #{param.itemId}
+            GROUP BY oi.order_id
+            )
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null">
+            and m.deliver_goods_date &gt; #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null">
+            and m.deliver_goods_date &lt; #{param.sendDateTo}
+        </if>
+        <if test="param.verifyDateFrom != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &gt; #{param.verifyDateFrom}
+            )
+        </if>
+        <if test="param.verifyDateTo != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &lt; #{param.verifyDateTo}
+            )
+        </if>
+        <if test="param.mallUserId!=null ">
+            and m.mall_user_id = #{param.mallUserId}
+        </if>
+
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+
+        </if>
+        <if test=" param.isCanJd!=null  ">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.yearMonth!=null  ">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test=" param.stockType!=null  ">
+            <if test=" param.stockType == 1 ">
+
+                <if test=" param.stockTypeAboutType != null and param.stockTypeAboutType == 2 ">
+                    and m.order_type = 0
+                </if>
+                <if test=" param.stockTypeAboutType != null and  param.stockTypeAboutType == 1 ">
+                    and ( m.order_type = 0 or m.order_type = 1 )and m.payment_amt > 0
+                </if>
+
+            </if>
+            <if test=" param.stockType == 2 ">
+                and m.order_type = 1 and m.payment_amt = 0
+            </if>
+        </if>
+        <if test=" param.logisticsMode != null and param.logisticsMode != ''">
+            and m.logistics_mode = #{param.logisticsMode}
+        </if>
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="doExcel" resultType="com.meifute.core.entity.MallOrderInfo"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        SELECT
+        m.order_id AS orderId,
+        m.company_id as companyId,
+        m.mall_user_id AS mallUserId,
+        m.payment_amt AS paymentAmt,
+        m.currency AS currency,
+        m.credit AS credit,
+        m.origin_amt AS originAmt,
+        m.post_fee_amt AS postFeeAmt,
+        m.discount_amt AS discountAmt,
+        m.addr_id AS addrId,
+        m.order_type AS orderType,
+        m.express_code AS expressCode,
+        m.belongs_code AS belongsCode,
+        m.leader_id AS leaderId,
+        m.proof_path AS proofPath,
+        m.buyer_memo AS buyerMemo,
+        m.cs_memo AS csMemo,
+        m.create_date AS createDate,
+        m.update_date AS updateDate,
+        m.order_status AS orderStatus,
+        m.verify_end_date AS verifyEndDate,
+        m.pay_end_date AS payEndDate,
+        m.is_del AS isDel,
+        m.addr_name AS addrName,
+        m.addr_phone AS addrPhone,
+        m.is_can_cancel AS isCanCancel,
+        m.logistics_type AS logisticsType,
+        m.pay_date AS payDate,
+        oi.`sku_code` skuCode,
+        oi.`amount` itemNumber,
+        oi.price,
+        m.logistics_mode as logisticsMode,
+        oi.serial_number as serialNumber
+        FROM
+        m_mall_order.mall_order_info m,
+        `m_mall_order`.`mall_order_item` oi
+        where
+        m.`order_id` = oi.`order_id`
+        AND m.currency = '0'
+        <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+            AND m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">
+                #{item}
+            </foreach>
+        </if>
+        <if test="param.orderId != null and param.orderId != ''">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.expressCode != null and param.expressCode != ''">
+            <!-- 有物流单号 -->
+            <if test="param.expressCode == '1'.toString()">
+                and length(m.express_code) &gt; 0
+                <!-- and m.express_code is not null and m.express_company is not null -->
+            </if>
+            <!-- 没有物流单号 -->
+            <if test="param.expressCode == '0'.toString()">
+                AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            </if>
+            <if test="param.expressCode != '1'.toString() and param.expressCode != '0'.toString()">
+                AND m.express_code = #{param.expressCode}
+            </if>
+        </if>
+        <if test="param.addrName != null and param.addrName != ''">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null and param.addrPhone != ''">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+
+        <if test="param.expressTimeout == '1'.toString()">
+            AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            AND m.order_status = '4'
+            AND TIMESTAMPDIFF(hour,m.deliver_goods_date,now()) &gt;= 24
+        </if>
+
+        <if test="param.itemId!=null and param.itemId != ''">
+            and oi.`item_id` = #{param.itemId}
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test=" param.yearMonth != null">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test="param.isCanJd != null">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.logisticsMode != null">
+            and m.logistics_mode = #{param.logisticsMode}
+        </if>
+        <if test="param.serialNumber != null">
+            and FIND_IN_SET(#{param.serialNumber}, oi.serial_number)
+        </if>
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="doWarehouseExcel" resultType="com.meifute.core.entity.MallOrderInfo"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+
+        SELECT
+        m.order_id AS orderId,
+        m.company_id as companyId,
+        m.mall_user_id AS mallUserId,
+        m.payment_amt AS paymentAmt,
+        m.currency AS currency,
+        m.credit AS credit,
+        m.origin_amt AS originAmt,
+        m.post_fee_amt AS postFeeAmt,
+        m.discount_amt AS discountAmt,
+        m.addr_id AS addrId,
+        m.order_type AS orderType,
+        m.express_code AS expressCode,
+        m.belongs_code AS belongsCode,
+        m.leader_id AS leaderId,
+        m.proof_path AS proofPath,
+        m.buyer_memo AS buyerMemo,
+        m.cs_memo AS csMemo,
+        m.create_date AS createDate,
+        m.update_date AS updateDate,
+        m.order_status AS orderStatus,
+        m.verify_end_date AS verifyEndDate,
+        m.pay_end_date AS payEndDate,
+        m.is_del AS isDel,
+        m.addr_name AS addrName,
+        m.addr_phone AS addrPhone,
+        m.is_can_cancel AS isCanCancel,
+        m.logistics_mode AS logisticsMode,
+        m.logistics_type AS logisticsType,
+        u.nick_name nickName,
+        u.phone phone,
+        u.role_id roleId ,
+        oi.`sku_code` skuCode,
+        sku.`title`,
+        (SELECT SUM(ABS(i.amount)) FROM `m_mall_order`.`mall_order_item` i WHERE i.order_id = m.order_id) itemTotalNum,
+        oi.`price` price,
+        oi.`amount` itemNumber,
+        oi.`price`*oi.`amount` itemAmount,
+        (SELECT SUM(i.price*i.amount) FROM `m_mall_order`.`mall_order_item` i WHERE i.order_id = m.order_id)
+        itemTotalAmount
+        FROM
+        m_mall_order.mall_order_info m,
+        `m_mall_order`.`mall_order_item` oi,
+        `m_mall_item`.`mall_sku` sku,
+        `m_mall_user`.`mall_user` u
+        <where>
+            m.`order_id` = oi.`order_id`
+            AND oi.`sku_code` = sku.`sku_code`
+            AND m.mall_user_id = u.id
+            AND m.currency = '0'
+            AND m.payment_amt > 0
+            AND m.belongs_code = '0'
+            AND m.logistics_mode = '2'
+            and m.order_type in ('0','2')
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                AND m.mall_user_id in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="param.orderId != null">
+                AND m.order_id = #{param.orderId}
+            </if>
+            <if test="param.expressCode != null">
+                AND m.express_code = #{param.expressCode}
+            </if>
+            <if test="param.addrName != null">
+                AND m.addr_name LIKE CONCAT('%',#{param.addrName},'%')
+            </if>
+            <if test="param.addrPhone != null">
+                AND m.addr_phone LIKE CONCAT('%',#{param.addrPhone},'%')
+            </if>
+            <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+                AND m.order_status IN
+                <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                    #{item, jdbcType=CHAR}
+                </foreach>
+            </if>
+            <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+                AND m.order_type IN
+                <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                    #{items, jdbcType=CHAR}
+                </foreach>
+            </if>
+            <if test="param.itemId!=null and param.itemId !=''">
+                and
+                m.order_id in (
+                select
+                oi.order_id
+                from
+                m_mall_order.mall_order_info oi,
+                `m_mall_order`.`mall_order_item` oitem
+                where
+                oi.`order_id` = oitem.`order_id`
+                AND
+                oitem.`item_id` = #{param.itemId}
+                GROUP BY oi.order_id
+                )
+            </if>
+            <if test="param.dateFrom != null">
+                and m.create_date &gt; #{param.dateFrom}
+            </if>
+            <if test="param.dateTo != null">
+                and m.create_date &lt; #{param.dateTo}
+            </if>
+            <if test=" param.yearMonth!=null  ">
+                and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+            </if>
+            <if test="param.isCanJd != null">
+                and m.is_can_jd = #{param.isCanJd}
+            </if>
+        </where>
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="doWarehouseExcelToJD" resultType="com.meifute.core.entity.MallOrderInfo"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+
+        SELECT
+        m.order_id AS orderId,
+        m.company_id as companyId,
+        m.mall_user_id AS mallUserId,
+        m.payment_amt AS paymentAmt,
+        m.currency AS currency,
+        m.credit AS credit,
+        m.origin_amt AS originAmt,
+        m.post_fee_amt AS postFeeAmt,
+        m.discount_amt AS discountAmt,
+        m.addr_id AS addrId,
+        m.order_type AS orderType,
+        m.express_code AS expressCode,
+        m.belongs_code AS belongsCode,
+        m.leader_id AS leaderId,
+        m.proof_path AS proofPath,
+        m.buyer_memo AS buyerMemo,
+        m.cs_memo AS csMemo,
+        m.create_date AS createDate,
+        m.update_date AS updateDate,
+        m.order_status AS orderStatus,
+        m.verify_end_date AS verifyEndDate,
+        m.pay_end_date AS payEndDate,
+        m.is_del AS isDel,
+        m.addr_name AS addrName,
+        m.addr_phone AS addrPhone,
+        m.is_can_cancel AS isCanCancel,
+        m.logistics_mode AS logisticsMode,
+        m.logistics_type AS logisticsType,
+        u.nick_name nickName,
+        u.phone phone,
+        u.role_id roleId ,
+        oi.`sku_code` skuCode,
+        sku.`title`,
+        (SELECT SUM(ABS(i.amount)) FROM `m_mall_order`.`mall_order_item` i WHERE i.order_id = m.order_id) itemTotalNum,
+        oi.`price` price,
+        oi.`amount` itemNumber,
+        oi.`price`*oi.`amount` itemAmount,
+        (SELECT SUM(i.price*i.amount) FROM `m_mall_order`.`mall_order_item` i WHERE i.order_id = m.order_id)
+        itemTotalAmount
+        FROM
+        m_mall_order.mall_order_info m,
+        `m_mall_order`.`mall_order_item` oi,
+        `m_mall_item`.`mall_sku` sku,
+        `m_mall_user`.`mall_user` u
+        <where>
+            m.`order_id` = oi.`order_id`
+            AND oi.`sku_code` = sku.`sku_code`
+            AND m.mall_user_id = u.id
+            AND m.currency = '0'
+            AND m.payment_amt > 0
+            AND m.belongs_code = '0'
+            AND m.logistics_mode = '2'
+            and m.order_type in ('0','2')
+            AND m.order_status = '3'
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                AND m.mall_user_id in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="param.orderId != null">
+                AND m.order_id = #{param.orderId}
+            </if>
+            <if test="param.expressCode != null">
+                AND m.express_code = #{param.expressCode}
+            </if>
+            <if test="param.addrName != null">
+                AND m.addr_name LIKE CONCAT('%',#{param.addrName},'%')
+            </if>
+            <if test="param.addrPhone != null">
+                AND m.addr_phone LIKE CONCAT('%',#{param.addrPhone},'%')
+            </if>
+            <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+                AND m.order_type IN
+                <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                    #{items, jdbcType=CHAR}
+                </foreach>
+            </if>
+            <if test="param.itemId!=null and param.itemId !=''">
+                and
+                m.order_id in (
+                select
+                oi.order_id
+                from
+                m_mall_order.mall_order_info oi,
+                `m_mall_order`.`mall_order_item` oitem
+                where
+                oi.`order_id` = oitem.`order_id`
+                AND
+                oitem.`item_id` = #{param.itemId}
+                GROUP BY oi.order_id
+                )
+            </if>
+            <if test="param.dateFrom != null">
+                and m.create_date &gt; #{param.dateFrom}
+            </if>
+            <if test="param.dateTo != null">
+                and m.create_date &lt; #{param.dateTo}
+            </if>
+            <if test=" param.yearMonth!=null  ">
+                and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+            </if>
+            and m.is_can_jd = '0'
+        </where>
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="queryCreditOrderInfoPages" resultMap="BaseResultMap"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from mall_order_info
+        <where>
+            currency='1'
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                AND mall_user_id in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="param.orderId != null">
+                AND order_id = #{param.orderId}
+            </if>
+            <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+                AND order_status IN
+                <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                    #{item, jdbcType=CHAR}
+                </foreach>
+            </if>
+            <if test="param.addrName != null">
+                AND addr_name LIKE CONCAT('%',#{param.addrName},'%')
+            </if>
+            <if test="param.addrPhone != null">
+                AND addr_phone LIKE CONCAT('%',#{param.addrPhone},'%')
+            </if>
+            <if test="param.expressCode != null">
+                AND express_code =#{param.expressCode}
+            </if>
+            <if test="param.itemName !=null and param.itemName !=''">
+                AND `order_id` IN (
+                SELECT moi.order_id FROM `m_mall_order`.`mall_order_item` moi,`m_mall_item`.`mall_item` i WHERE
+                moi.`item_id` = i.`id` AND i.`title` = #{param.itemName}
+                )
+            </if>
+            <if test="param.dateFrom != null">
+                and create_date &gt;= #{param.dateFrom}
+            </if>
+            <if test="param.dateTo != null">
+                and create_date &lt;= #{param.dateTo}
+            </if>
+            <if test="param.sendDateFrom != null ">
+                and deliver_goods_date &gt;= #{param.sendDateFrom}
+            </if>
+            <if test="param.sendDateTo != null ">
+                and deliver_goods_date &lt;= #{param.sendDateTo}
+            </if>
+
+        </where>
+        GROUP BY order_id
+        ORDER BY create_date DESC
+    </select>
+
+    <select id="queryUserOrderInfoPages" resultMap="BaseResultMap"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from mall_order_info
+        <where>
+            currency=#{param.currency}
+            AND mall_user_id =#{param.mallUserId}
+            and order_type not in ('4')
+            and order_status not in('7','6')
+            and payment_amt &gt; 0
+        </where>
+        GROUP BY order_id
+        ORDER BY create_date DESC
+    </select>
+
+    <select id="queryOrderEclpSONo" resultType="com.meifute.core.entity.MallOrderInfo">
+        SELECT eclpsono, order_id as orderId
+        FROM mall_order_info
+        USE INDEX(idx_create_date)
+        WHERE
+        express_code IN ('')
+        AND eclpsono NOT IN ('')
+        AND order_status = '4'
+        AND is_del='0'
+        and logistics_mode = '0'
+        ORDER BY create_date DESC
+    </select>
+
+    <select id="getOrderPush" resultType="java.lang.String">
+        select m.order_id from `mall_order_info` m where m.order_status='3'
+        and m.currency='0'
+        and (m.create_date BETWEEN '2019-1-20' and now())
+        and m.order_id not in (select f.order_id from `mall_order_item_amount` f)
+    </select>
+
+    <select id="getWaringSku" resultType="java.lang.Integer" parameterType="com.meifute.core.vo.WaringSkuParam">
+        select COALESCE(sum(amount),0)
+        from
+        (
+        select distinct t2.mall_user_id,t2.order_id,abs(t1.amount) as amount
+        ,t2.order_type,t1.sku_code
+        from m_mall_order.mall_order_item t1,
+        m_mall_order.mall_order_info t2
+        where t1.order_id=t2.order_id
+        and t2.order_type in ('0','2')
+        and t2.order_status in ('3','4','5')
+        and t1.sku_code = #{skuCode}
+        and t2.currency = '0'
+        and t2.mall_user_id = #{mallUserId}
+        and t2.create_date between #{warningStartDate} and #{warningEndDate}
+        ) t1
+    </select>
+    <resultMap id="ItemExcelMap" type="com.meifute.core.dto.ItemOrderExcelDTO">
+        <id column="order_id" property="orderId"/>
+        <result column="order_status" property="status"/>
+        <result column="create_date" property="createTime"/>
+        <result column="addr_name" property="addressName"/>
+        <result column="addr_phone" property="addressPhone"/>
+        <result column="addr_id" property="address"/>
+        <result column="order_type" property="orderType"/>
+        <result column="post_fee_amt" property="postFee"/>
+        <result column="express_code" property="expressCode"/>
+        <result column="buyer_memo" property="buyMemo"/>
+        <result column="cs_memo" property="csMemo"/>
+        <result column="deliver_goods_date" property="sendDate"/>
+        <result column="nick_name" property="agentNickName"/>
+        <result column="phone" property="agentPhone"/>
+        <result column="role_id" property="agentLevel"/>
+        <result column="company_id" property="companyId"/>
+        <collection property="orderItems" ofType="com.meifute.core.dto.MallOrderItemDTO">
+            <result column="item_id" property="itemId"/>
+            <result column="title" property="itemName"/>
+            <result column="credit" property="credit"/>
+            <result column="amount" property="amount"/>
+            <result column="sku_code" property="skuCode"/>
+        </collection>
+    </resultMap>
+
+    <select id="getItemOrderExcel" resultMap="ItemExcelMap"
+            parameterType="com.meifute.core.vo.GetOrderPageListParam">
+        SELECT
+        oi.order_id ,oi.`order_status` ,oi.`create_date` , oi.addr_name ,
+        oi.`addr_phone` ,oi.addr_id , oi.`order_type` ,oi.`post_fee_amt` ,
+        oi.`express_code` ,oi.`buyer_memo` ,oi.`cs_memo` ,
+        oi.deliver_goods_date ,oi.company_id,u.`nick_name` ,
+        u.`phone` ,u.`role_id` ,ot.credit,ot.amount,ot.item_id,ot.sku_code,mi.title
+        FROM
+        `m_mall_order`.`mall_order_info` oi,
+        `m_mall_order`.`mall_order_item` ot,
+        `m_mall_user`.`mall_user` u,
+        `m_mall_item`.mall_item mi
+        WHERE oi.`currency` = '1'
+        AND oi.order_id=ot.order_id
+        AND oi.mall_user_id = u.id
+        and ot.item_id=mi.id
+        <if test="param.orderId != null and param.orderId !=''">
+            and oi.order_id = #{param.orderId }
+        </if>
+        <if test="param.nickName != null and param.nickName !=''">
+            and u.nick_name = #{param.nickName }
+        </if>
+        <if test="param.phone != null and param.phone !=''">
+            and u.phone = #{param.phone }
+        </if>
+        <if test="param.name != null and param.name !=''">
+            and u.name = #{param.name }
+        </if>
+        <if test="param.addrPhone != null and param.addrPhone !=''">
+            and oi.addr_phone = #{param.addrPhone }
+        </if>
+        <if test="param.addrName != null and param.addrName !=''">
+            and oi.addr_name = #{param.addrName }
+        </if>
+        <if test="param.expressCode != null and param.expressCode !=''">
+            and oi.express_code = #{param.expressCode }
+        </if>
+        <if test="param.orderStatusList !=null and param.orderStatusList.size()>0">
+            and oi.order_status in
+            <foreach collection="param.orderStatusList" index="index" item="orderStatus" open="(" separator=","
+                     close=")">
+                #{orderStatus}
+            </foreach>
+        </if>
+        <if test="param.dateFrom !=null">
+            and oi.create_date &gt;= #{param.dateFrom}
+        </if>
+        <if test="param.dateTo !=null">
+            and oi.create_date &lt;= #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null ">
+            and oi.deliver_goods_date &gt;= #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null ">
+            and oi.deliver_goods_date &lt;= #{param.sendDateTo}
+        </if>
+        <if test="param.itemName != null">
+            AND mi.itemName =#{param.itemName}
+        </if>
+        order by oi.create_date desc
+    </select>
+
+
+    <select id="getItemSkuByOrderId" resultType="com.meifute.core.dto.ItemAndSkuDTO">
+
+
+
+        SELECT i.`title` itemName,oi.`sku_code` skuCode,oi.amount amount
+        FROM
+          `m_mall_order`.`mall_order_item` oi,
+          `m_mall_item`.`mall_item` i
+        WHERE oi.`item_id` = i.`id`
+          AND oi.order_id = #{id}
+
+        UNION all
+
+        SELECT
+          i.`title` itemName,
+          tg.`sku_code`  skuCode,
+          tg.amount amount
+        FROM
+          `m_mall_order`.`mall_transfer_goods` tg,
+          `m_mall_item`.`mall_item` i
+        WHERE tg.`item_id` = i.`id`
+          AND tg.`relation_id` = #{id}
+
+    </select>
+
+
+    <select id="getItemsByOrderID" resultType="com.meifute.core.dto.OrderItemDetailDto">
+        SELECT
+		  tg.relation_id orderId,
+          i.`title` title,
+          tg.`sku_code`  skuCode,
+          tg.amount amount,
+          sku.unit unit,
+          sku.belongs_code belongsCode,
+          sku.retail_price retailPrice,
+          u.role_id agentLevel,
+		  sku.sku_img skuImg,
+		  sku.sku_img itemImages
+        FROM
+          `m_mall_order`.`mall_transfer_goods` tg,
+          `m_mall_item`.`mall_item` i,
+		   m_mall_item.mall_sku sku,
+		   m_mall_user.mall_user u
+        WHERE tg.`item_id` = i.`id`
+                and tg.mall_user_id = u.id
+				and tg.`sku_code`  = sku.sku_code
+          AND tg.`relation_id` = #{orderId}
+    </select>
+
+    <select id="getFirstOutItemOrderInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from mall_order_info
+        where mall_user_id=#{mallUserId}
+        and order_type in ('0','2')
+        and order_status in('3','4','5')
+        and is_del='0'
+        and belongs_code = '0'
+        order by create_date asc
+        limit 0,1
+    </select>
+
+    <select id="queryUserMonthSales" resultType="com.meifute.core.entity.MallOrderItem"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        select m.amount as amount,m.price as price,m.unit as unit,m.spec as spec FROM m_mall_order.mall_order_info o,m_mall_order.mall_order_item m
+        WHERE o.order_id = m.order_id
+        AND o.mall_user_id = #{param.mallUserId}
+        AND o.create_date  &gt;= #{param.dateFrom}
+        AND o.create_date &lt;= #{param.dateTo}
+        AND o.order_status in ('4','5')
+        and o.order_type in('0','2')
+    </select>
+
+    <select id="queryUserMonthStock" parameterType="com.meifute.core.entity.MallOrderInfo"
+            resultType="com.meifute.core.entity.MallOrderItem">
+        select m.amount as amount,m.price as price,m.unit as unit,m.spec as spec FROM m_mall_order.mall_order_info o,m_mall_order.mall_order_item m
+        WHERE o.order_id = m.order_id
+        AND o.mall_user_id = #{param.mallUserId}
+        AND o.create_date  &gt;= #{param.dateFrom}
+        AND o.create_date &lt;= #{param.dateTo}
+        AND o.order_status in ('3','4','5','8')
+        and o.order_type in('0','1')
+        AND o.payment_amt>0
+    </select>
+
+    <select id="queryTemMonthSales" resultType="com.meifute.core.entity.MallOrderItem"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        select m.amount as amount,m.price as price,m.unit as unit,m.spec as spec
+        FROM m_mall_order.mall_order_info o,m_mall_order.mall_order_item m
+        WHERE o.order_id = m.order_id
+        AND o.mall_user_id in
+        <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+            #{items}
+        </foreach>
+        AND o.create_date &gt;= #{param.dateFrom}
+        AND o.create_date &lt;= #{param.dateTo}
+        AND o.order_status in ('4','5')
+        and o.order_type in('0','2')
+    </select>
+
+    <select id="queryTeamMonthStock" parameterType="com.meifute.core.entity.MallOrderInfo"
+            resultType="com.meifute.core.entity.MallOrderItem">
+        select m.amount as amount,m.price as price,m.unit as unit,m.spec as spec FROM m_mall_order.mall_order_info
+        o,m_mall_order.mall_order_item m
+        WHERE o.order_id = m.order_id
+        AND o.mall_user_id in
+        <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+            #{items}
+        </foreach>
+        AND o.create_date &gt;= #{param.dateFrom}
+        AND o.create_date &lt;= #{param.dateTo}
+        AND o.order_status in ('3','4','5','8')
+        AND m.sku_code not in ('P001','P002','P001-X')
+        and o.order_type in('0','1')
+        AND o.payment_amt>0
+    </select>
+    <select id="searchOrderInfo" parameterType="com.meifute.core.vo.SelectOrderParam" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `m_mall_order`.`mall_order_info`
+        where order_id in (
+        select order_id from `m_mall_order`.`mall_order_item`
+        where sku_code in
+        <foreach collection="param.skuCodeList" open="(" close=")" separator="," item="skuCode" index="index">
+            #{skuCode}
+        </foreach>
+        and is_del = '0'
+        and mall_user_id=#{param.mallUserId}
+        )
+        and is_del = '0'
+        and mall_user_id=#{param.mallUserId}
+        and order_type in
+        <foreach collection="param.orderTypes" open="(" close=")" separator="," item="orderType" index="index">
+            #{orderType}
+        </foreach>
+        and create_date &gt; '2018-12-01'
+        order by create_date desc
+    </select>
+
+
+    <select id="queryJDExpressCode" resultType="com.meifute.core.entity.MallOrderInfo">
+        select DISTINCT(eclpsono), order_id as orderId
+        from mall_order_info  USE INDEX(idx_create_date)
+        where
+        is_del='0'
+        and express_code not in('')
+        AND order_status ='4'
+        AND eclpsono not in ('')
+        AND create_date &gt; '2019-1-23'
+        order by create_date ASC
+    </select>
+
+    <select id="selectOrderById" parameterType="java.lang.String" resultType="com.meifute.core.entity.MallOrderInfo">
+        select m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as paymentAmt,m.currency as currency,
+        m.credit as credit,
+        m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,
+        m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,
+        m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,
+        m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,
+        m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as
+        addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel
+        from  `m_mall_order`.`mall_order_info` m
+        where  m.order_id = #{orderId}
+        and m.is_del = '0'
+    </select>
+
+
+    <select id="getSumOrderAmountByAgent" parameterType="com.meifute.core.entity.MallAgent"
+            resultType="java.math.BigDecimal">
+        select SUM(ABS(o.amount)*o.price)
+        FROM m_mall_order.mall_order_info m,m_mall_order.mall_order_item o
+        WHERE m.order_id = o.order_id
+        and m.mall_user_id =#{param.userId}
+        <if test="param.beginTime != null">
+            and m.create_date &gt; #{param.beginTime}
+        </if>
+        <if test="param.endTime">
+            and m.create_date &lt; #{param.endTime}
+        </if>
+        AND m.order_type in('0','1')
+        AND m.order_status in ('3','4','5','8')
+        AND o.sku_code not in ('P001','P002','P001-X')
+        AND m.currency='0'
+        AND m.payment_amt>0
+    </select>
+
+    <select id="getOutOrderSumPrice" resultType="java.math.BigDecimal"
+            parameterType="com.meifute.core.entity.MallAgent">
+        select SUM(ABS(o.amount)*o.price)
+        FROM m_mall_order.mall_order_info m,m_mall_order.mall_order_item o
+        WHERE m.order_id = o.order_id
+        and m.mall_user_id =#{param.userId}
+        <if test="param.beginTime != null">
+            and m.create_date &gt; #{param.beginTime}
+        </if>
+        <if test="param.endTime">
+            and m.create_date &lt; #{param.endTime}
+        </if>
+        AND m.order_type in('0','2')
+        AND m.order_status in('4','5')
+        AND o.sku_code not in ('P001','P002','P001-X')
+        AND m.currency='0'
+    </select>
+
+
+    <select id="getOutOrderItems" parameterType="com.meifute.core.entity.MallAgent"
+            resultType="com.meifute.core.entity.MallOrderItem">
+        select o.order_id as orderId,o.sku_code as skuCode,o.amount as amount,o.unit as unit
+        FROM m_mall_order.mall_order_info m,m_mall_order.mall_order_item o
+        WHERE m.order_id = o.order_id
+        and m.mall_user_id =#{param.userId}
+        <if test="param.beginTime != null">
+            and m.create_date &gt; #{param.beginTime}
+        </if>
+        <if test="param.endTime">
+            and m.create_date &lt; #{param.endTime}
+        </if>
+        AND m.order_type in('0','2')
+        AND m.order_status in('4','5')
+        AND o.sku_code not in ('P001','P002','P001-X')
+        AND m.currency='0'
+    </select>
+
+
+    <select id="getOrderByAgentList" parameterType="com.meifute.core.entity.MallAgent"
+            resultType="com.meifute.core.entity.MallOrderItem">
+        select o.order_id as orderId,o.sku_code as skuCode,o.amount as amount,o.unit as unit
+        FROM m_mall_order.mall_order_info m,m_mall_order.mall_order_item o
+        WHERE m.order_id = o.order_id
+        and m.mall_user_id =#{param.userId}
+        <if test="param.beginTime != null">
+            and m.create_date &gt; #{param.beginTime}
+        </if>
+        <if test="param.endTime">
+            and m.create_date &lt; #{param.endTime}
+        </if>
+        AND m.order_type in('0','1')
+        AND m.order_status in ('3','4','5','8')
+        AND o.sku_code not in ('P001','P002','P001-X')
+        AND m.currency='0'
+        AND m.payment_amt>0
+    </select>
+
+
+    <select id="orderReportByParams" parameterType="com.meifute.core.dto.report.OrderReportRequest"
+            resultType="com.meifute.core.dto.report.MonthlyOrderReportResponseDTO">
+        SELECT
+        t4.month as month,
+        ( CASE WHEN t5.amount IS NOT NULL THEN t4.amount + t5.amount ELSE t4.amount END ) AS monthlyStockTotalAmount,
+        ( CASE WHEN t5.number IS NOT NULL THEN t4.number + t5.number ELSE t4.number END ) AS monthlyStockTotalNumber,
+        ( CASE WHEN t5.orderNumber IS NOT NULL THEN t4.orderNumber + t5.orderNumber ELSE t4.orderNumber END ) AS
+        monthlyStockOrderNumber
+        FROM
+        (SELECT
+        CONCAT( DATE_FORMAT( t1.create_date, '%m' ) ) as month,
+        sum( ABS(t2.amount) * t2.price) as amount,
+        sum( ABS( t2.amount )) as number,
+        count(DISTINCT t1.order_id) as orderNumber
+        FROM
+        m_mall_order.mall_order_info t1,
+        m_mall_order.mall_order_item t2
+        WHERE
+        t1.order_id = t2.order_id
+        AND t1.is_del = '0'
+        and t2.currency = '0'
+        AND t2.unit IN ( '箱', '组', '盒', '袋' )
+        <if test="param.year != null">
+            AND CONCAT( YEAR ( t1.create_date ) ) = #{param.year}
+        </if>
+        <if test="param.orderTypeList != null ">
+            AND t1.order_type in
+            <foreach collection="param.orderTypeList" open="(" close=")" separator="," item="orderType" index="index">
+                #{orderType}
+            </foreach>
+            AND t1.payment_amt > 0
+        </if>
+        <if test="param.orderStatusList != null ">
+            AND t1.order_status in
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="orderStatus"
+                     index="index">
+                #{orderStatus}
+            </foreach>
+        </if>
+        GROUP BY month) t4
+        LEFT JOIN (SELECT
+        CONCAT( DATE_FORMAT( t1.create_date, '%m' ) ) as month,
+        sum( ABS(t2.amount) * t2.price) as amount,
+        sum( floor( ABS( t2.amount )/3)) as number,
+        count(DISTINCT t1.order_id) as orderNumber
+        FROM
+        m_mall_order.mall_order_info t1,
+        m_mall_order.mall_order_item t2
+        WHERE
+        t1.order_id = t2.order_id
+        AND t1.is_del = '0'
+        and t2.currency = '0'
+        AND t2.unit IN ( '支' )
+        <if test="param.year != null">
+            AND CONCAT( YEAR ( t1.create_date ) ) = #{param.year}
+        </if>
+        <if test="param.orderTypeList != null ">
+            AND t1.order_type in
+            <foreach collection="param.orderTypeList" open="(" close=")" separator="," item="orderType" index="index">
+                #{orderType}
+            </foreach>
+            AND t1.payment_amt > 0
+        </if>
+        <if test="param.orderStatusList != null ">
+            AND t1.order_status in
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="orderStatus"
+                     index="index">
+                #{orderStatus}
+            </foreach>
+        </if>
+        GROUP BY month) t5
+        ON t4.MONTH = t5.MONTH
+    </select>
+
+
+    <!-- 订单统计报表之订单数量统计 -->
+    <select id="orderReportByTotalAmount" parameterType="com.meifute.core.dto.report.OrderReportRequest"
+            resultType="com.meifute.core.dto.report.MonthlyOrderReportResponseDTO">
+        SELECT
+        CONCAT( DATE_FORMAT( t1.create_date, '%m' ) ) as month,
+        count(DISTINCT t1.order_id) as monthlyShipmentOrderNumber
+        FROM
+        m_mall_order.mall_order_info t1,
+        m_mall_order.mall_order_item t2
+        WHERE
+        t1.order_id = t2.order_id
+        AND t1.is_del = '0'
+        and t2.currency = '0'
+        <if test="param.year != null">
+            AND CONCAT( YEAR ( t1.create_date ) ) = #{param.year}
+        </if>
+        <if test="param.orderTypeList != null ">
+            AND t1.order_type in
+            <foreach collection="param.orderTypeList" open="(" close=")" separator="," item="orderType" index="index">
+                #{orderType}
+            </foreach>
+            AND t1.payment_amt > 0
+        </if>
+        <if test="param.orderStatusList != null ">
+            AND t1.order_status in
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="orderStatus"
+                     index="index">
+                #{orderStatus}
+            </foreach>
+        </if>
+        GROUP BY month
+    </select>
+    <!--按下单时间统计订单中产品进出货的数据-->
+    <select id="selectOrderItemReport" resultType="com.meifute.core.dto.OrderItemReportDTO">
+        SELECT
+        <if test="param.orderRule != null and param.orderRule == 1">
+            sum( abs( item.amount ) ) AS inputCount,
+            sum( abs( item.amount * item.price ) ) AS inputAmt,
+        </if>
+        <if test="param.orderRule != null and param.orderRule == 2">
+            sum( abs( item.amount ) ) AS outputCount,
+            sum( abs( item.amount * item.price ) ) AS outputAmt,
+        </if>
+        item.sku_code AS skuCode
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.belongs_code = '0'
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.orderRule != null and param.orderRule == 1">
+            AND (
+            ( info.order_type = '1' AND info.order_status = '5' )
+            OR ( info.order_type = '0' AND info.order_status IN ( '3', '4', '5', '8' ) )
+            )
+        </if>
+        <if test="param.orderRule != null and param.orderRule == 2">
+            AND info.order_type IN ( '0', '2' )
+            AND info.order_status IN ( '4', '5' )
+        </if>
+        )
+        GROUP BY
+        item.sku_code
+    </select>
+    <!--按下单时间统计订单中产品进出货的数据  统计所有的进货数量-->
+    <select id="selectTotalInputOrderItemCount" resultType="java.lang.Integer">
+        SELECT
+        sum( abs( item.amount ) )
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.belongs_code = '0'
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+
+        </if>
+        AND (( info.order_type = '1' AND info.order_status = '5' )OR ( info.order_type = '0' AND info.order_status IN (
+        '3', '4', '5', '8' ) ) )
+        );
+
+    </select>
+    <!--按下单时间统计订单中产品进出货的数据  统计所有的出货数量-->
+    <select id="selectTotalOutputOrderItemCount" resultType="java.lang.Integer">
+        SELECT
+        sum( abs( item.amount ) )
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.belongs_code = '0'
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        AND info.order_type IN ( '0', '2' )
+        AND info.order_status IN ( '4', '5' )
+        );
+
+    </select>
+    <select id="selectInputItem" resultType="java.lang.Integer">
+        SELECT
+        SUM(item.amount)
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.order_type IN ( '0', '1' ,'3')
+        AND info.order_status IN ( '5' )
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        )
+        AND (item.sku_code LIKE 'C%' or item.sku_code LIKE 'P%')
+    </select>
+    <select id="selectOutputItem" resultType="java.lang.Integer">
+
+        SELECT
+        SUM(item.amount)
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.order_type IN ( '0', '1' ,'3')
+        AND info.order_status IN ( '5' )
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        )
+        AND (item.sku_code LIKE 'C%' or item.sku_code LIKE 'P%')
+    </select>
+    <select id="selectOutputItemDetail" resultType="com.meifute.core.dto.report.InputOutputItemReportDTO">
+
+        SELECT
+        t1.skuCode as skuCode,
+        (t1.inputRealCount + t2.exchangeCount) as inputCount,
+        t1.inputRealCount as inputRealCount,
+        t2.exchangeCount as exchangeCount,
+        t1.inputAmt as inputAmt,
+        t3.outputCount as outputCount,
+        t3.outputAmt as outputAmt
+
+        FROM (
+        SELECT
+        SUM( item.amount ) AS inputRealCount,
+        SUM( item.amount * item.price ) AS inputAmt,
+        item.sku_code AS skuCode
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.order_type IN ( '0', '1' )
+        AND info.order_status IN ( '5' )
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        )
+        AND (item.sku_code LIKE 'C%' or item.sku_code LIKE 'P%')
+        GROUP BY item.sku_code
+        ORDER BY item.sku_code
+        )t1,(
+        SELECT
+        SUM(item.amount) AS exchangeCount,
+        SUM(item.amount * item.price) AS exchangeAmt,
+        item.sku_code AS skuCode
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.order_type IN ( '3' )
+        AND info.order_status IN ( '5' )
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        )
+        AND (item.sku_code LIKE 'C%' or item.sku_code LIKE 'P%')
+        GROUP BY item.sku_code
+        ORDER BY item.sku_code
+        )t2,(
+        SELECT
+        SUM(ABS(item.amount)) AS outputCount,
+        SUM(ABS(item.amount * item.price)) AS outputAmt,
+        item.sku_code AS skuCode
+        FROM
+        mall_order_item item
+        WHERE
+        item.order_id IN (
+        SELECT
+        info.order_id
+        FROM
+        mall_order_info info
+        WHERE
+        info.order_type IN ( '0','2' )
+        AND info.order_status IN ( '5' )
+        <if test="param.beginTime != null">
+            AND info.create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime">
+            AND info.create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+        )
+        AND (item.sku_code LIKE 'C%' or item.sku_code LIKE 'P%')
+        GROUP BY item.sku_code
+        ORDER BY item.sku_code
+        )t3 WHERE t1.skuCode = t2.skuCode and t1.skuCode = t3.skuCode;
+
+    </select>
+
+    <!-- 所有订单不分页 -->
+    <select id="queryOrderList" resultType="com.meifute.core.entity.MallOrderInfo">
+        select ag.admin_code AS adminCode,m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as
+        paymentAmt,m.currency
+        as currency,
+        m.credit as credit,
+        m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,
+        m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,
+        m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,
+        m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,
+        m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as
+        addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel,m.deliver_goods_date as
+        deliverGoodsDate,m.confirm_goods_date as confirmGoodsDate,
+        m.is_can_jd as isCanJd,m.relation_order_id as relationOrderId ,express_company expressCompany,
+        m.provincial_urban_area as provincialUrbanArea, m.street as street, m.logistics_mode as logisticsMode
+        , m.close_date as closeDate, m.logistics_type as logisticsType, m.pay_type as payType,m.pay_date as payDate,
+        m.transaction_id as transactionId, m.trade_no as tradeNo, m.e_trade_no as eTradeNo
+        FROM
+        m_mall_order.mall_order_info m LEFT JOIN m_mall_admin.admin_agent ag on ag.mall_user_id = m.mall_user_id
+        where
+        m.currency='0'
+        and m.is_del = '0'
+        AND m.order_type not in('7')
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+
+        <if test="param.expressCode != null">
+            <!-- 有物流单号 -->
+            <if test="param.expressCode == '1'.toString()">
+                and length(m.express_code) &gt; 0
+                <!-- and m.express_code is not null and m.express_company is not null -->
+            </if>
+            <!-- 没有物流单号 -->
+            <if test="param.expressCode == '0'.toString()">
+                AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            </if>
+            <if test="param.expressCode != '1'.toString() and param.expressCode != '0'.toString()">
+                AND m.express_code = #{param.expressCode}
+            </if>
+
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name = #{param.addrName}
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=CHAR}
+            </foreach>
+        </if>
+
+        <if test="param.expressTimeout == '1'.toString()">
+            AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            AND m.order_status = '4'
+            AND TIMESTAMPDIFF(hour,m.deliver_goods_date,now()) &gt;= 24
+        </if>
+
+        <if test="param.itemId!=null and param.itemId !=''">
+            and
+            m.order_id in (
+            select
+            oi.order_id
+            from
+            m_mall_order.mall_order_info oi,
+            `m_mall_order`.`mall_order_item` oitem
+            where
+            oi.`order_id` = oitem.`order_id`
+            AND
+            oitem.`item_id` = #{param.itemId}
+            GROUP BY oi.order_id
+            )
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null">
+            and m.deliver_goods_date &gt; #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null">
+            and m.deliver_goods_date &lt; #{param.sendDateTo}
+        </if>
+        <if test="param.verifyDateFrom != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &gt; #{param.verifyDateFrom}
+            )
+        </if>
+        <if test="param.verifyDateTo != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &lt; #{param.verifyDateTo}
+            )
+        </if>
+        <if test="param.mallUserId!=null ">
+            and m.mall_user_id = #{param.mallUserId}
+        </if>
+
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+
+        </if>
+        <if test=" param.isCanJd!=null  ">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.yearMonth!=null  ">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test=" param.stockType!=null  ">
+            <if test=" param.stockType == 1 ">
+
+                <if test=" param.stockTypeAboutType != null and param.stockTypeAboutType == 2 ">
+                    and m.order_type = 0
+                </if>
+                <if test=" param.stockTypeAboutType != null and  param.stockTypeAboutType == 1 ">
+                    and m.order_type = 0 or m.order_type = 1 and m.payment_amt > 0
+                </if>
+
+            </if>
+            <if test=" param.stockType == 2 ">
+                and m.order_type = 1 and m.payment_amt = 0
+            </if>
+        </if>
+        <if test=" param.logisticsMode != null and param.logisticsMode != ''">
+            and m.logistics_mode = #{param.logisticsMode}
+        </if>
+        ORDER BY m.create_date DESC
+    </select>
+
+    <!-- 筛选商务code为null的订单,上一级-->
+    <select id="queryOrderListFirstParent" resultType="com.meifute.core.entity.MallOrderInfo">
+        SELECT
+        tab1.adminCode AS adminCode,
+        tab2.orderId,
+        tab2.mallUserId,
+        tab2.paymentAmt,
+        tab2.currency,
+        tab2.credit,
+        tab2.originAmt,
+        tab2.postFeeAmt,
+        tab2.discountAmt,
+        tab2.addrId,
+        tab2.orderType,
+        tab2.expressCode,
+        tab2.belongsCode,
+        tab2.leaderId,
+        tab2.proofPath,
+        tab2.buyerMemo,
+        tab2.csMemo,
+        tab2.createDate,
+        tab2.updateDate,
+        tab2.orderStatus,
+        tab2.verifyEndDate,
+        tab2.payEndDate,
+        tab2.isDel,
+        tab2.addrName,
+        tab2.addrPhone,
+        tab2.isCanCancel,
+        tab2.deliverGoodsDate,
+        tab2.confirmGoodsDate,
+        tab2.isCanJd,
+        tab2. relationOrderId,
+        tab2.expressCompany
+        FROM
+        (
+        SELECT
+        ag.admin_code,
+        m.order_id AS orderId,
+        m.mall_user_id AS mallUserId,
+        m.payment_amt AS paymentAmt,
+        m.currency AS currency,
+        m.credit AS credit,
+        m.origin_amt AS originAmt,
+        m.post_fee_amt AS postFeeAmt,
+        m.discount_amt AS discountAmt,
+        m.addr_id AS addrId,
+        m.order_type AS orderType,
+        m.express_code AS expressCode,
+        m.belongs_code AS belongsCode,
+        m.leader_id AS leaderId,
+        m.proof_path AS proofPath,
+        m.buyer_memo AS buyerMemo,
+        m.cs_memo AS csMemo,
+        m.create_date AS createDate,
+        m.update_date AS updateDate,
+        m.order_status AS orderStatus,
+        m.verify_end_date AS verifyEndDate,
+        m.pay_end_date AS payEndDate,
+        m.is_del AS isDel,
+        m.addr_name AS addrName,
+        m.addr_phone AS addrPhone,
+        m.is_can_cancel AS isCanCancel,
+        m.deliver_goods_date AS deliverGoodsDate,
+        m.confirm_goods_date AS confirmGoodsDate,
+        m.is_can_jd AS isCanJd,
+        m.relation_order_id AS relationOrderId,
+        express_company expressCompany
+        FROM
+        m_mall_order.mall_order_info m LEFT JOIN m_mall_admin.admin_agent ag on ag.mall_user_id = m.mall_user_id
+        WHERE
+        m.currency = '0'
+        AND m.order_type NOT IN ( '7' )
+        and ag.admin_code is null
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.expressCode != null">
+            AND m.express_code = #{param.expressCode}
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.itemId!=null and param.itemId !=''">
+            and
+            m.order_id in (
+            select
+            oi.order_id
+            from
+            m_mall_order.mall_order_info oi,
+            `m_mall_order`.`mall_order_item` oitem
+            where
+            oi.`order_id` = oitem.`order_id`
+            AND
+            oitem.`item_id` = #{param.itemId}
+            GROUP BY oi.order_id
+            )
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null">
+            and m.deliver_goods_date &gt; #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null">
+            and m.deliver_goods_date &lt; #{param.sendDateTo}
+        </if>
+        <if test="param.verifyDateFrom != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &gt; #{param.verifyDateFrom}
+            )
+        </if>
+        <if test="param.verifyDateTo != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &lt; #{param.verifyDateTo}
+            )
+        </if>
+        <if test="param.mallUserId!=null ">
+            and m.mall_user_id = #{param.mallUserId}
+        </if>
+
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+
+        </if>
+        <if test=" param.isCanJd!=null  ">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.yearMonth!=null  ">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test=" param.stockType!=null  ">
+            <if test=" param.stockType == 1 ">
+
+                <if test=" param.stockTypeAboutType != null and param.stockTypeAboutType == 2 ">
+                    and m.order_type = 0
+                </if>
+                <if test=" param.stockTypeAboutType != null and  param.stockTypeAboutType == 1 ">
+                    and m.order_type = 0 or m.order_type = 1 and m.payment_amt > 0
+                </if>
+
+            </if>
+            <if test=" param.stockType == 2 ">
+                and m.order_type = 1 and m.payment_amt = 0
+            </if>
+        </if>
+        ORDER BY
+        m.create_date DESC
+        ) tab2
+        LEFT JOIN (
+        SELECT
+        (
+        SELECT
+        ag.admin_code
+        FROM
+        m_mall_admin.admin_agent ag
+        LEFT JOIN m_mall_agent.mall_agent ma1 ON ag.mall_user_id = ma1.user_id
+        WHERE
+        ma1.id = ma.parent_id
+        ) AS adminCode,
+        t2.mallUserId
+        FROM
+        (
+        SELECT
+        ag.admin_code,
+
+        m.mall_user_id AS mallUserId
+        FROM
+        m_mall_order.mall_order_info m LEFT JOIN m_mall_admin.admin_agent ag on ag.mall_user_id = m.mall_user_id
+        WHERE
+        m.currency = '0'
+        AND m.order_type NOT IN ( '7' )
+        and ag.admin_code is null
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.expressCode != null">
+            AND m.express_code = #{param.expressCode}
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.itemId!=null and param.itemId !=''">
+            and
+            m.order_id in (
+            select
+            oi.order_id
+            from
+            m_mall_order.mall_order_info oi,
+            `m_mall_order`.`mall_order_item` oitem
+            where
+            oi.`order_id` = oitem.`order_id`
+            AND
+            oitem.`item_id` = #{param.itemId}
+            GROUP BY oi.order_id
+            )
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null">
+            and m.deliver_goods_date &gt; #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null">
+            and m.deliver_goods_date &lt; #{param.sendDateTo}
+        </if>
+        <if test="param.verifyDateFrom != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &gt; #{param.verifyDateFrom}
+            )
+        </if>
+        <if test="param.verifyDateTo != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &lt; #{param.verifyDateTo}
+            )
+        </if>
+        <if test="param.mallUserId!=null ">
+            and m.mall_user_id = #{param.mallUserId}
+        </if>
+
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+
+        </if>
+        <if test=" param.isCanJd!=null  ">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.yearMonth!=null  ">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test=" param.stockType!=null  ">
+            <if test=" param.stockType == 1 ">
+
+                <if test=" param.stockTypeAboutType != null and param.stockTypeAboutType == 2 ">
+                    and m.order_type = 0
+                </if>
+                <if test=" param.stockTypeAboutType != null and  param.stockTypeAboutType == 1 ">
+                    and m.order_type = 0 or m.order_type = 1 and m.payment_amt > 0
+                </if>
+
+            </if>
+            <if test=" param.stockType == 2 ">
+                and m.order_type = 1 and m.payment_amt = 0
+            </if>
+        </if>
+        ORDER BY
+        m.create_date DESC
+        ) t2
+        LEFT JOIN m_mall_agent.mall_agent ma ON t2.mallUserId = ma.user_id ) tab1 ON tab1.mallUserId = tab2.mallUserId
+        GROUP BY
+        tab2.orderId
+
+
+    </select>
+
+    <select id="getAdminAgentByUserId" resultType="com.meifute.core.entity.MallAdminAgent">
+        select  id,admin_code adminCode from m_mall_admin.admin_agent where mall_user_id = #{userId}
+    </select>
+
+
+    <select id="queryOrderListByAdminCode" resultType="com.meifute.core.entity.MallOrderInfo">
+        select ag.admin_code AS adminCode,m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as
+        paymentAmt,m.currency
+        as currency,
+        m.credit as credit,
+        m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,
+        m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,
+        m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,
+        m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,
+        m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as
+        addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel,m.deliver_goods_date as
+        deliverGoodsDate,m.confirm_goods_date as confirmGoodsDate,
+        m.is_can_jd as isCanJd,m.relation_order_id as relationOrderId ,express_company expressCompany,
+        m.provincial_urban_area as provincialUrbanArea, m.street as street
+        FROM
+        m_mall_order.mall_order_info m LEFT JOIN m_mall_admin.admin_agent ag on ag.mall_user_id = m.mall_user_id
+        where
+        m.currency='0'
+        and m.is_del = '0'
+        AND m.order_type not in('7')
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.adminCode != null">
+            AND ag.admin_code = #{param.adminCode}
+        </if>
+        <if test="param.expressCode != null">
+            <!-- 有物流单号 -->
+            <if test="param.expressCode == '1'.toString()">
+                and length(m.express_code) &gt; 0
+                <!-- and m.express_code is not null and m.express_company is not null -->
+            </if>
+            <!-- 没有物流单号 -->
+            <if test="param.expressCode == '0'.toString()">
+                AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            </if>
+            <if test="param.expressCode != '1'.toString() and param.expressCode != '0'.toString()">
+                AND m.express_code = #{param.expressCode}
+            </if>
+
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.itemId!=null and param.itemId !=''">
+            and
+            m.order_id in (
+            select
+            oi.order_id
+            from
+            m_mall_order.mall_order_info oi,
+            `m_mall_order`.`mall_order_item` oitem
+            where
+            oi.`order_id` = oitem.`order_id`
+            AND
+            oitem.`item_id` = #{param.itemId}
+            GROUP BY oi.order_id
+            )
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null">
+            and m.deliver_goods_date &gt; #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null">
+            and m.deliver_goods_date &lt; #{param.sendDateTo}
+        </if>
+        <if test="param.verifyDateFrom != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &gt; #{param.verifyDateFrom}
+            )
+        </if>
+        <if test="param.verifyDateTo != null">
+            AND m.order_id in (
+            SELECT order_id FROM mall_order_verify v
+            WHERE verify_status in('1','2')
+            AND verify_type ='1'
+            and v.update_date &lt; #{param.verifyDateTo}
+            )
+        </if>
+        <if test="param.mallUserId!=null ">
+            and m.mall_user_id = #{param.mallUserId}
+        </if>
+
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+
+        </if>
+        <if test=" param.isCanJd!=null  ">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.yearMonth!=null  ">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test=" param.stockType!=null  ">
+            <if test=" param.stockType == 1 ">
+
+                <if test=" param.stockTypeAboutType != null and param.stockTypeAboutType == 2 ">
+                    and m.order_type = 0
+                </if>
+                <if test=" param.stockTypeAboutType != null and  param.stockTypeAboutType == 1 ">
+                    and m.order_type = 0 or m.order_type = 1 and m.payment_amt > 0
+                </if>
+
+            </if>
+            <if test=" param.stockType == 2 ">
+                and m.order_type = 1 and m.payment_amt = 0
+            </if>
+        </if>
+
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="getRetailPurchases" resultType="com.meifute.core.model.AgentPhoneAndAmount">
+        select t4.phone, t3.amount, t3.user_id userId
+        from m_mall_user.mall_user t4,
+        (select sum(t2.amount) amount,t1.mall_user_id user_id,t1.order_id
+        from m_mall_order.mall_order_info t1, m_mall_order.mall_order_item t2
+        where
+        t1.order_id = t2.order_id
+        and t1.order_type in ('0','1')
+        and t1.currency = '0'
+        and payment_amt > 0
+        and t1.order_status in ('3','4','5','8')
+        and t2.sku_code not in ('P001','P002')
+        and t1.create_date BETWEEN '2019-07-26' and '2019-08-28'
+        GROUP BY t1.mall_user_id) t3
+        where t3.user_id = t4.id
+    </select>
+
+
+    <select id="getAllOrdersByInput" resultType="string">
+        select o.order_id from
+        m_mall_order.mall_order_info o,
+        m_mall_order.mall_order_item oi,
+        m_mall_item.mall_sku sku
+        where
+        o.order_id = oi.order_id
+        and oi.sku_code = sku.sku_code
+        and o.mall_user_id = #{userId}
+        <if test="key!=null and key != ''">
+            and (o.addr_name like CONCAT('%',#{key},'%') or sku.title like CONCAT('%',#{key},'%'))
+        </if>
+        order by o.create_date desc
+    </select>
+
+    <select id="queryWarehouseOrderInfo" resultType="com.meifute.core.entity.MallOrderInfo"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        select m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as paymentAmt,m.currency as currency,
+        m.credit as credit,
+        m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,
+        m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,
+        m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,
+        m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,
+        m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as
+        addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel,m.deliver_goods_date as
+        deliverGoodsDate,m.confirm_goods_date as confirmGoodsDate,
+        m.is_can_jd as isCanJd,m.relation_order_id as relationOrderId ,express_company expressCompany,
+        m.provincial_urban_area as provincialUrbanArea, m.street as street, u.name as name, u.phone as phone, u.role_id
+        as roleId,
+        u.nick_name as nickName, m.logistics_type as logisticsType
+        FROM
+        m_mall_order.mall_order_info m
+        inner join m_mall_order.mall_order_item i on m.order_id = i.order_id
+        LEFT JOIN m_mall_user.mall_user u on m.mall_user_id = u.id
+        where
+        m.belongs_code = '0'
+        and m.logistics_mode = '2'
+        and m.order_type in ('0','2')
+        and m.order_status in
+        <if test="param.orderStatusList != null">
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.skuCode !=null">
+            and i.sku_code = #{param.skuCode}
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.sendDateFrom != null">
+            and m.deliver_goods_date &gt; #{param.sendDateFrom}
+        </if>
+        <if test="param.sendDateTo != null">
+            and m.deliver_goods_date &lt; #{param.sendDateTo}
+        </if>
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test=" param.isCanJd != null  ">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.yearMonth != null ">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        group by m.order_id
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="getAcOrderEclpSoNo" resultType="com.meifute.core.entity.activity.MallAcOrder">
+        SELECT single_num as singleNum, id
+        FROM m_mall_item.mall_ac_order
+        WHERE
+        single_num is not null
+        AND express_code is null
+        AND order_status = '4'
+        AND is_del='0'
+        and delivery_mode = '0'
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getNowDaysC036" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select sum(t3.amount) from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = 'C036-Z' then abs(t2.amount)*3
+        when t2.sku_code = 'C036-H' then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and t1.create_date > '2020-01-26 00:00:00'
+        and t1.order_type in (0,2)
+        and t1.order_status in (1,3,4,5,8)
+        and t2.sku_code in ('C036-H','C036-Z')
+        and t1.mall_user_id = #{userId}
+        ) t3
+    </select>
+
+    <select id="getNowDaysC036New" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select sum(t3.amount) from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = 'C036-Z' then abs(t2.amount)*3
+        when t2.sku_code = 'C036-H' then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and to_days(t1.create_date) = to_days(now())
+        and t1.order_type in (0,2)
+        and t1.order_status in (1,3,4,5,8)
+        and t2.sku_code in ('C036-H','C036-Z')
+        and t1.mall_user_id = #{userId}
+        ) t3
+    </select>
+
+    <select id="temporaryPushToJd" parameterType="com.meifute.core.vo.TemPushToJd" resultType="java.lang.String">
+        select t1.order_id from mall_order_info t1
+        where
+        t1.order_id not in (select order_id from mall_order_item where sku_code = 'C036-Z' and abs(amount) >= #{amount}
+        and TO_DAYS(create_date)=TO_DAYS(#{date}))
+        <if test="phones != null">
+            and t1.mall_user_id not in
+            <foreach collection="phones" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        and TO_DAYS(t1.create_date)=TO_DAYS(#{date}) and t1.order_status = 3
+        group by t1.order_id
+    </select>
+
+
+    <select id="queryOrderToPush" resultType="com.meifute.core.dto.QueryPushOrderInfoDto">
+        SELECT
+        t1.order_id as orderId,
+        t1.order_type as orderType,
+        t1.payment_amt as paymentAmt,
+        t3.NAME as name,
+        t3.phone as phone,
+        t3.role_id as roleId,
+        t4.company_name as companyName,
+        t1.order_status as orderStatus,
+        t1.addr_id as addrId,
+        t1.addr_name as addrName,
+        t1.addr_phone as addrPhone,
+        t1.create_date as createDate,
+        t1.is_can_jd as isCanJd,
+        t1.logistics_mode as logisticsMode
+        FROM
+        mall_order_info t1
+        LEFT JOIN m_mall_user.mall_user t3 ON t1.mall_user_id = t3.id
+        LEFT JOIN m_mall_agent.mall_branch_office t4 ON t4.id = t1.company_id
+        WHERE
+        t1.order_type IN ( '0', '2' )
+        AND t1.order_status = 3
+        AND t1.belongs_code = 0
+        AND t1.is_del = 0
+        <if test=" param.isCanJd!=null  ">
+            and t1.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test="param.dateFrom != null">
+            and t1.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and t1.create_date &lt; #{param.dateTo}
+        </if>
+        <if test="param.skuCode != null">
+            AND
+            LOCATE( #{param.skuCode}, ( SELECT GROUP_CONCAT( sku_code )
+            FROM m_mall_order.mall_order_item oi
+            WHERE oi.order_id = t1.order_id ) ) &gt; 0
+        </if>
+        <if test=" param.logisticsMode != null and param.logisticsMode != ''">
+            and t1.logistics_mode = #{param.logisticsMode}
+        </if>
+        ORDER BY
+        t1.create_date asc
+    </select>
+    <select id="queryOrderItemDetail" resultType="com.meifute.core.dto.OrderItemDetailDto">
+
+        SELECT
+        oi.order_id as orderId,
+        oi.sku_code as skuCode,
+        mk.sku_img as skuImg,
+        mk.title as title,
+        oi.unit as unit,
+        oi.price as price,
+        oi.amount as amount
+
+        FROM
+        m_mall_order.mall_order_item oi
+        LEFT JOIN m_mall_item.mall_sku mk ON oi.sku_code = mk.sku_code
+        WHERE
+        oi.is_del = '0'
+        <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and oi.order_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="orderId" index="index">
+                #{orderId, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getNewGoodsCount" parameterType="com.meifute.core.vo.OutGoodsDate" resultType="java.lang.Integer">
+        select
+        case when sum(t3.amount) is null then 0
+		else sum(t3.amount) end  amont
+        from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = '30290020' then abs(t2.amount)*2
+        when t2.sku_code = '30290010' then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and t1.create_date > #{startTime}
+        and t1.create_date &lt; #{entTime}
+        and t1.order_type in ('0','1','3')
+        and t2.type = '0'
+        and t1.order_status in (0,1,3,4,5,8,12)
+        and t2.sku_code in ('30290020','30290010')
+        and t1.mall_user_id = #{userId}
+        and t1.is_del = '0'
+        ) t3
+    </select>
+
+    <select id="getNewGoodsCountExchangeOut" parameterType="com.meifute.core.vo.OutGoodsDate"
+            resultType="java.lang.Integer">
+        select
+        case when sum(t3.amount) is null then 0
+		else sum(t3.amount) end  amont
+        from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = '30290020' then abs(t2.amount)*2
+        when t2.sku_code = '30290010' then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and t1.create_date > #{startTime}
+        and t1.create_date &lt; #{entTime}
+        and t1.order_type = '3'
+        and t2.type = '1'
+        and t1.order_status in (0,1,3,4,5,8,12)
+        and t2.sku_code in ('30290020','30290010')
+        and t1.mall_user_id = #{userId}
+        and t1.is_del = '0'
+        ) t3
+    </select>
+
+    <select id="getNewGoodsCount2" parameterType="com.meifute.core.vo.OutGoodsDate" resultType="java.lang.Integer">
+        select
+        case when sum(t3.amount) is null then 0
+		else sum(t3.amount) end  amont
+        from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = '30290020' then abs(t2.amount)*2
+        when t2.sku_code = '30290010' then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and t1.create_date > #{startTime}
+        and t1.create_date &lt; #{entTime}
+        and t1.order_type in ('0','2')
+        and t1.order_status in (0,1,3,4,5,8,12)
+        and t2.sku_code in ('30290020','30290010')
+        and t1.mall_user_id = #{userId}
+        and t1.is_del = '0'
+        ) t3
+    </select>
+    <select id="querySplitOrderIds" resultType="java.lang.String">
+
+        SELECT order_id from m_mall_order.mall_order_item
+        WHERE order_id in (
+        select m.order_id
+        FROM
+        m_mall_order.mall_order_info m
+        left join m_mall_order.mall_order_item i on m.order_id = i.order_id
+        where
+        m.is_del = '0'
+        and m.belongs_code = '0'
+        and m.order_type in ('0','2')
+        and m.order_status = '3'
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name LIKE CONCAT('%',#{param.addrName},'%')
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone LIKE CONCAT('%',#{param.addrPhone},'%')
+        </if>
+
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="param.itemId != null and param.itemId != ''">
+            AND i.item_id = #{param.itemId}
+        </if>
+        <if test="param.logisticsMode != null and param.logisticsMode != ''">
+            AND m.logistics_mode = #{param.logisticsMode}
+        </if>
+        <if test="param.splitFlag != null and param.splitFlag != ''">
+            AND m.split_flag = #{param.splitFlag}
+        </if>
+        ) group by order_id HAVING COUNT(1) > 1
+    </select>
+    <select id="querySplitOrderInfo" resultType="com.meifute.core.entity.MallOrderInfo">
+
+        SELECT
+        m.order_id AS orderId,
+        m.mall_user_id AS mallUserId,
+        m.payment_amt AS paymentAmt,
+        m.currency AS currency,
+        m.credit AS credit,
+        m.origin_amt AS originAmt,
+        m.post_fee_amt AS postFeeAmt,
+        m.discount_amt AS discountAmt,
+        m.addr_id AS addrId,
+        m.order_type AS orderType,
+        m.express_code AS expressCode,
+        m.belongs_code AS belongsCode,
+        m.leader_id AS leaderId,
+        m.proof_path AS proofPath,
+        m.buyer_memo AS buyerMemo,
+        m.cs_memo AS csMemo,
+        m.create_date AS createDate,
+        m.update_date AS updateDate,
+        m.order_status AS orderStatus,
+        m.verify_end_date AS verifyEndDate,
+        m.pay_end_date AS payEndDate,
+        m.is_del AS isDel,
+        m.addr_name AS addrName,
+        m.addr_phone AS addrPhone,
+        m.is_can_cancel AS isCanCancel,
+        m.deliver_goods_date AS deliverGoodsDate,
+        m.confirm_goods_date AS confirmGoodsDate,
+        m.is_can_jd AS isCanJd,
+        m.relation_order_id AS relationOrderId,
+        express_company expressCompany,
+        m.provincial_urban_area AS provincialUrbanArea,
+        m.street AS street,
+        m.logistics_mode AS logisticsMode,
+        u.NAME AS NAME,
+        u.phone AS phone,
+        u.role_id AS roleId,
+        u.nick_name AS nickName
+        FROM
+        m_mall_order.mall_order_info m
+        LEFT JOIN m_mall_user.mall_user u ON m.mall_user_id = u.id
+        where
+        m.order_id in
+        <foreach collection="orderIds" open="(" close=")" separator="," item="items" index="index">
+            #{items, jdbcType=VARCHAR}
+        </foreach>
+        ORDER BY m.create_date DESC
+    </select>
+
+    <select id="getTakeOfItemCount" parameterType="com.meifute.core.vo.CheckOutGoods" resultType="java.lang.Integer">
+        select
+        case when sum(t3.amount) is null then 0
+        else sum(t3.amount) end amont
+        from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = #{skuCode} then abs(t2.amount) * #{specNumber}
+        when t2.sku_code = #{nextSkuCode} then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and t1.create_date > #{startTime}
+        and t1.create_date &lt; #{entTime}
+        and t1.order_type in ('0','2')
+        and t1.order_status in (0,1,3,4,5,8,12)
+        and t2.sku_code in
+        <foreach collection="skuCodes" open="(" close=")" separator="," item="items" index="index">
+            #{items}
+        </foreach>
+        and t1.mall_user_id = #{userId}
+        and t1.is_del = '0'
+        ) t3
+    </select>
+
+    <select id="getTakeOfItemCountEveryDay" parameterType="com.meifute.core.vo.CheckOutGoods"
+            resultType="java.lang.Integer">
+        select
+        case when sum(t3.amount) is null then 0
+        else sum(t3.amount) end amont
+        from
+        (select t1.order_id, t2.sku_code,
+        case when t2.sku_code = #{skuCode} then abs(t2.amount) * #{specNumber}
+        when t2.sku_code = #{nextSkuCode} then abs(t2.amount) end amount
+        from mall_order_info t1, mall_order_item t2
+        where t1.order_id = t2.order_id
+        and date(t1.create_date) = date(now())
+        and t1.order_type in ('0','2')
+        and t1.order_status in (0,1,3,4,5,8,12)
+        and t2.sku_code in
+        <foreach collection="skuCodes" open="(" close=")" separator="," item="items" index="index">
+            #{items}
+        </foreach>
+        and t1.mall_user_id = #{userId}
+        and t1.is_del = '0'
+        ) t3
+    </select>
+    <select id="querySplitOrderIds2" resultType="java.lang.String">
+        select
+        m.order_id
+        FROM
+        m_mall_order.mall_order_info m
+        left join m_mall_order.mall_order_item i on m.order_id = i.order_id
+        where
+        m.is_del = '0'
+        and m.belongs_code = '0'
+        and m.order_type in ('0','2')
+        and m.order_status = '3'
+        <if test="param.orderId != null">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.addrName != null">
+            AND m.addr_name LIKE CONCAT('%',#{param.addrName},'%')
+        </if>
+        <if test="param.addrPhone != null">
+            AND m.addr_phone LIKE CONCAT('%',#{param.addrPhone},'%')
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test=" param.mallUserIdList != null and param.mallUserIdList.size() > 0 ">
+            and m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="param.itemId != null and param.itemId != ''">
+            AND i.item_id = #{param.itemId}
+        </if>
+        <if test="param.logisticsMode != null and param.logisticsMode != ''">
+            AND m.logistics_mode = #{param.logisticsMode}
+        </if>
+        <if test="param.splitFlag != null and param.splitFlag != ''">
+            AND m.split_flag = #{param.splitFlag}
+        </if>
+        group by m.order_id
+    </select>
+
+    <select id="getLeakageSlipOrder" resultType="java.lang.String">
+        select order_id orderId from mall_order_info where order_status = '3'
+        and logistics_mode = '0' and  TIMESTAMPDIFF(MINUTE,pay_date,now()) &gt; 65 and is_del = '0'
+        and create_date > '2020-04-01' and is_can_jd = '0' and belongs_code = '0'
+    </select>
+
+    <select id="getMallSkuSpec" parameterType="java.lang.String" resultType="com.meifute.core.entity.MallSkuSpec">
+        select is_small_unit isSmallUnit,is_can_conversion isCanConversion, sku_code skuCode, structure_sku structureSku,
+        conversion_ratio conversionRatio, relation_sku relationSku,spec spec,unit unit,create_date createDate,weight weight,
+        transport_goods_no transportGoodsNo,express_type expressType,six_code sixCode,product_date productDate,is_can_change isCanChange,
+        is_can_divide isCanDivide,is_can_reduce isCanReduce,currency currency,`size` `size`
+        from m_mall_item.mall_sku_spec
+        where express_type = #{expressType}
+        and sku_code = #{skuCode}
+        and is_del = '0'
+    </select>
+    <select id="queryShipmentMoreThan10" resultType="com.meifute.core.dto.QueryShipmentMoreThan20Dto">
+        SELECT
+            DATE(l.create_date) as orderDateStr,
+            l.order_id as orderId,
+            u.`name` as name,
+            u.phone as phone,
+            sum( abs( item.amount ) ) as stock,
+            sku.title as title
+        FROM
+            m_mall_order.mall_order_info l
+            LEFT JOIN m_mall_order.mall_order_item item ON l.order_id = item.order_id
+            LEFT JOIN m_mall_user.mall_user u ON u.id = l.mall_user_id
+            LEFT JOIN m_mall_item.mall_sku sku ON item.sku_code = sku.sku_code
+        WHERE
+            u.is_test_user = '1'
+            AND u.back_flag = '1'
+            AND l.create_date &gt;= #{dateFrom}
+            AND l.create_date &lt;= #{dateTo}
+            AND l.order_type IN ( '0', '2' )
+            AND l.order_status IN ( '3', '4', '5', '8' )
+            AND l.payment_amt > '0'
+            AND l.is_del = '0'
+            AND item.sku_code NOT IN ( 'P001', 'P002', 'F001', '40000061', '40000062' )
+            AND item.unit IN ( '组', '盒' )
+            AND abs( item.amount ) >= 10
+        GROUP BY
+            phone,
+            title,
+	        DATE(l.create_date)
+        ORDER BY
+            stock DESC,
+        l.create_date ASC
+    </select>
+
+    <select id="getNoSerialNumberOrderInfo" resultType="com.meifute.core.entity.MallOrderInfo">
+        select o.eclpsono as eclpSoNo, o.order_id as orderId, i.sku_code  as skuCode, o.addr_id as addrId,
+        o.payment_amt paymentAmt, o.post_fee_amt postFeeAmt,o.addr_name addrName, o.addr_phone addrPhone,o.provincial_urban_area provincialUrbanArea,
+        o.mall_user_id mallUserId, i.id itemId, i.amount itemAmount
+        from m_mall_order.mall_order_info o,m_mall_order.mall_order_item i
+        where
+        o.order_id = i.order_id
+        and o.order_type in ('0','2')
+        and o.order_status in ('4','5')
+        AND o.eclpsono NOT IN ('')
+        and o.create_date > #{startTime}
+        and i.sku_code in ('C034-H','C033-H')
+        and (i.serial_number is null or i.serial_number = '')
+        and o.order_id not in (select order_id from m_mall_order.mall_order_item t1 where t1.order_id = o.order_id and t1.serial_number is not null and t1.serial_number &lt;&gt; '' group by order_id)
+    </select>
+
+
+    <select id="queryOrderListBySerialNumber" resultType="com.meifute.core.entity.MallOrderInfo">
+        select ag.admin_code AS adminCode,m.order_id as orderId, m.mall_user_id as mallUserId, m.payment_amt as
+        paymentAmt,m.currency
+        as currency,
+        m.credit as credit,
+        m.origin_amt as originAmt, m.post_fee_amt as postFeeAmt, m.discount_amt as discountAmt,
+        m.addr_id as addrId, m.order_type as orderType, m.express_code as expressCode, m.belongs_code as belongsCode,
+        m.leader_id as leaderId, m.proof_path as proofPath, m.buyer_memo as buyerMemo,
+        m.cs_memo as csMemo, m.create_date as createDate, m.update_date as updateDate, m.order_status as orderStatus,
+        m.verify_end_date as verifyEndDate, m.pay_end_date as payEndDate, m.is_del as isDel,m.addr_name as
+        addrName,m.addr_phone as addrPhone,m.is_can_cancel as isCanCancel,m.deliver_goods_date as
+        deliverGoodsDate,m.confirm_goods_date as confirmGoodsDate,
+        m.is_can_jd as isCanJd,m.relation_order_id as relationOrderId ,express_company expressCompany,
+        m.provincial_urban_area as provincialUrbanArea, m.street as street, m.logistics_mode as logisticsMode
+        , m.close_date as closeDate, m.logistics_type as logisticsType, m.pay_type as payType,m.pay_date as payDate,
+        m.transaction_id as transactionId, m.trade_no as tradeNo, m.e_trade_no as eTradeNo
+        FROM
+        m_mall_order.mall_order_info m LEFT JOIN m_mall_admin.admin_agent ag on ag.mall_user_id = m.mall_user_id
+        where
+        m.currency='0'
+        and m.order_id = #{param.orderId}
+        and m.is_del = '0'
+        AND m.order_type in('0','2')
+        ORDER BY m.create_date DESC
+    </select>
+    <select id="getOrderIdsByPayInfoRefundParam" resultType="java.lang.String">
+        SELECT
+        id
+        FROM
+        mall_order_info
+        WHERE
+        is_del = 0
+        <if test="param.orderType != null and param.orderType != ''">
+            AND order_type = #{param.orderType,jdbcType=VARCHAR}
+        </if>
+        <if test="param.beginTime != null">
+            AND create_date &gt;= #{param.beginTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="param.endTime != null">
+            AND create_date &lt;= #{param.endTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+
+    <select id="getOrderIdBySerialNumber" parameterType="java.lang.String" resultType="java.lang.String">
+        select i.order_id orderId from m_mall_order.mall_order_item i
+        where
+        i.is_del = '0'
+        <if test="serialNumber != null and serialNumber != ''">
+            and FIND_IN_SET(#{serialNumber}, i.serial_number)
+        </if>
+        <if test="securityNumber != null and securityNumber != ''">
+            and FIND_IN_SET(#{securityNumber}, i.security_number)
+        </if>
+    </select>
+    <select id="getThreeOrder" resultType="com.meifute.core.dto.OrderInfoByInputDTO">
+        SELECT
+            o.`mall_user_id` userId,
+            o.`order_id` orderId,
+            o.`create_date` createDate,
+            ABS( oi.amount ) * oi.price number,
+            ABS( oi.amount ) doubleNumber
+        FROM
+            `m_mall_order`.`mall_order_info` o,
+            `m_mall_order`.`mall_order_item` oi
+        WHERE
+            o.`order_id` = oi.`order_id`
+            AND o.payment_amt > 0
+            AND o.order_type IN ( '0', '1' )
+            AND o.order_status IN ( '3', '4', '5', '8' )
+            AND oi.sku_code NOT IN ( 'P001', 'P002', 'F001', '40000061', '40000062' )
+            AND o.relation_order_id IS NULL
+            AND o.mall_user_id = #{userId}
+        ORDER BY
+            o.create_date DESC
+            LIMIT 0,3
+    </select>
+    <select id="getNotFinishOrder" resultMap="BaseResultMap">
+        select * from m_mall_order.mall_order_info where mall_user_id = #{userId} and order_status not in ('2','5','6','7','9','11')
+        and create_date > '2019-05-01 00:00:00' and is_del='0'
+    </select>
+
+    <select id="queryOrderAmountByDate" resultType="com.meifute.core.dto.UserOrderAmountDTO">
+        select o.mall_user_id as userId,sum(abs(i.amount)) amount
+        from m_mall_order.mall_order_info o left join m_mall_order.mall_order_item i on o.order_id = i.order_id
+        where
+        o.order_type in ('0','2')
+        and o.order_status in ('3','4','5','8')
+        <if test="startDate != null and startDate !=''">
+            and o.pay_date &gt; #{startDate}
+        </if>
+        <if test="endDate != null and endDate !=''">
+            and o.pay_date &lt; #{endDate}
+        </if>
+        and i.sku_code in ('C034-H','C033-H')
+        group by o.mall_user_id
+    </select>
+
+    <select id="queryOrderAmountByUserIds" parameterType="com.meifute.core.vo.UserIdsDateParam"
+            resultType="com.meifute.core.dto.UserOrderAmountDTO">
+        select mall_user_id as userId,
+        sum(CASE WHEN sku_code IN ( 'C036-H', 'C038-H', 'C039-H', 'C040-H','30130040','30240010','30090040','30030090' )
+        THEN abs( amount ) / 3
+        WHEN sku_code IN ('30290010') THEN abs(amount) / 2
+        ELSE abs( amount ) END ) as amount,
+        max(create_date) createDate
+        from
+        (
+        select o.mall_user_id,oi.sku_code,oi.amount,o.create_date
+        from
+        m_mall_order.mall_order_info o,
+        m_mall_order.mall_order_item oi
+        where o.order_id = oi.order_id
+        and o.is_del='0'
+        and o.belongs_code = '0'
+        and oi.currency = '0'
+        and o.order_type in ('0','1')
+        and o.order_status in ('1','3','4','5','8')
+        and oi.sku_code not in ('P001','P002','F001','40000061','40000062')
+        and o.payment_amt &gt; 0
+        and o.create_date &gt; #{param.startDate}
+        and o.create_date &lt; #{param.endDate}
+        <if test=" param.userIds != null and param.userIds.size() > 0 ">
+            and o.mall_user_id in
+            <foreach collection="param.userIds" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        ) t
+        group by t.mall_user_id
+    </select>
+
+    <select id="getOrderIdsByStockInfoParam" resultType="java.lang.String">
+
+        select order_id from m_mall_order.mall_order_info
+        where mall_user_id = #{userId}
+        and (
+            order_id LIKE CONCAT('%',#{param},'%') or
+            addr_name LIKE CONCAT('%',#{param},'%') or
+            addr_phone LIKE CONCAT('%',#{param},'%')
+        )
+    </select>
+
+    <update id="updateForceReceivingGoods">
+        UPDATE `mall_order_info`
+            SET order_status = '5',
+            confirm_goods_date = NOW()
+        WHERE
+            is_del = '0'
+            AND order_status = '4'
+            AND DATE_ADD( deliver_goods_date, INTERVAL 15 DAY ) &lt; NOW()
+    </update>
+
+    <select id="doExcelCount" resultType="java.lang.Integer"
+            parameterType="com.meifute.core.entity.MallOrderInfo">
+        SELECT
+        count(id)
+        FROM
+        m_mall_order.mall_order_info m,
+        `m_mall_order`.`mall_order_item` oi
+        where
+        m.`order_id` = oi.`order_id`
+        AND m.currency = '0'
+        <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+            AND m.mall_user_id in
+            <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="item" index="index">
+                #{item}
+            </foreach>
+        </if>
+        <if test="param.orderId != null and param.orderId != ''">
+            AND m.order_id = #{param.orderId}
+        </if>
+        <if test="param.expressCode != null and param.expressCode != ''">
+            <!-- 有物流单号 -->
+            <if test="param.expressCode == '1'.toString()">
+                and length(m.express_code) &gt; 0
+                <!-- and m.express_code is not null and m.express_company is not null -->
+            </if>
+            <!-- 没有物流单号 -->
+            <if test="param.expressCode == '0'.toString()">
+                AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            </if>
+            <if test="param.expressCode != '1'.toString() and param.expressCode != '0'.toString()">
+                AND m.express_code = #{param.expressCode}
+            </if>
+        </if>
+        <if test="param.addrName != null and param.addrName != ''">
+            AND m.addr_name =#{param.addrName}
+        </if>
+        <if test="param.addrPhone != null and param.addrPhone != ''">
+            AND m.addr_phone =#{param.addrPhone}
+        </if>
+        <if test="param.orderStatusList != null and param.orderStatusList.size() > 0">
+            AND m.order_status IN
+            <foreach collection="param.orderStatusList" open="(" close=")" separator="," item="item" index="index">
+                #{item, jdbcType=CHAR}
+            </foreach>
+        </if>
+        <if test="param.orderTypes != null and param.orderTypes.size() > 0">
+            AND m.order_type IN
+            <foreach collection="param.orderTypes" open="(" close=")" separator="," item="items" index="index">
+                #{items, jdbcType=VARCHAR}
+            </foreach>
+        </if>
+
+        <if test="param.expressTimeout == '1'.toString()">
+            AND ( m.express_code is null or length(m.express_code) &lt; 1)
+            AND m.order_status = '4'
+            AND TIMESTAMPDIFF(hour,m.deliver_goods_date,now()) &gt;= 24
+        </if>
+
+        <if test="param.itemId!=null and param.itemId != ''">
+            and oi.`item_id` = #{param.itemId}
+        </if>
+        <if test="param.dateFrom != null">
+            and m.create_date &gt; #{param.dateFrom}
+        </if>
+        <if test="param.dateTo != null">
+            and m.create_date &lt; #{param.dateTo}
+        </if>
+        <if test=" param.yearMonth != null">
+            and CONCAT(YEAR(m.create_date),'-',DATE_FORMAT(m.create_date,'%m')) = #{param.yearMonth}
+        </if>
+        <if test="param.isCanJd != null">
+            and m.is_can_jd = #{param.isCanJd}
+        </if>
+        <if test=" param.logisticsMode != null">
+            and m.logistics_mode = #{param.logisticsMode}
+        </if>
+        <if test="param.serialNumber != null">
+            and FIND_IN_SET(#{param.serialNumber}, oi.serial_number)
+        </if>
+        ORDER BY m.create_date DESC
+    </select>
+</mapper>

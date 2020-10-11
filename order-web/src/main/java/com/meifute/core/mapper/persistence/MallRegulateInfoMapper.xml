@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.MallRegulateInfoMapper">
+    <select id="queryMallRegulatePageList" resultType="com.meifute.core.entity.MallRegulateInfo">
+        SELECT mi.id as id, mi.mall_user_id as mallUserId, mi.admin_id as adminId, mi.regulate_type as regulateType,
+        mi.order_id as orderId, mi.create_date as createDate, mi.update_date as updateDate, mi.status as status,
+        mi.memo as memo, mi.is_del as isDel
+        FROM mall_regulate_info mi
+        <where>
+            <if test="param.mallUserIdList != null and param.mallUserIdList.size() > 0">
+                mi.mall_user_id  in
+                <foreach collection="param.mallUserIdList" open="(" close=")" separator="," item="mallUserId" index="index">
+                    #{mallUserId, jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            <if test="param.adminIdList != null and param.adminIdList.size() > 0">
+                and mi.admin_id  in
+                <foreach collection="param.adminIdList" open="(" close=")" separator="," item="adminId" index="index">
+                    #{adminId, jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            <if test="param.orderId != null">
+                AND mi.order_id=#{param.orderId}
+            </if>
+            <if test="param.id != null">
+                AND mi.id=#{param.id}
+            </if>
+            <if test="param.regulateType != null">
+                AND mi.regulate_type=#{param.regulateType}
+            </if>
+        </where>
+        ORDER BY mi.create_date DESC
+    </select>
+
+
+</mapper>

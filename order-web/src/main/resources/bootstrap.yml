@@ -1,0 +1,112 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: mall-order
+liquibase:
+  change-log: classpath:liquibase\master.xml
+
+mybatis:
+  type-aliases-package: com.meifute.core.entity
+  mapper-locations: classpath:com/meifute/core/mapper/persistence/*Mapper.xml
+  type-handlers-package: com.meifute.core.mapper.typehandler
+
+
+##本地环境
+---
+spring:
+  profiles: local
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      profile: local
+      label: master
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin-love:donotloveyou@localhost:8880/eureka/
+  instance:
+    prefer-ip-address: true
+
+
+##客户端测试环境
+---
+spring:
+  profiles: client
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      profile: client
+      label: master
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin-love:donotloveyou@172.19.116.110:8880/eureka/
+  instance:
+    prefer-ip-address: true
+
+
+#A集群生产环境
+---
+spring:
+  profiles: prod-a
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      profile: prod-a
+      label: master
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin-love:donotloveyou@eureka-a-1:8880/eureka/,http://admin-love:donotloveyou@eureka-a-2:8880/eureka/
+  instance:
+    prefer-ip-address: true
+
+
+#B集群生产环境
+---
+spring:
+  profiles: prod-b
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      profile: prod-b
+      label: master
+
+eureka:
+  client:
+    service-url:
+#      defaultZone: http://admin-love:donotloveyou@eureka-b-1:8880/eureka/,http://admin-love:donotloveyou@eureka-b-2:8880/eureka/
+      defaultZone: http://admin-love:donotloveyou@172.20.2.50:8880/eureka/,http://admin-love:donotloveyou@172.20.2.51:8880/eureka/
+  instance:
+    prefer-ip-address: true
+
+
+#预发布环境
+---
+spring:
+  profiles: prod-release
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      profile: prod-release
+      label: master
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin-love:donotloveyou@eureka-release:8880/eureka/
+  instance:
+    prefer-ip-address: true

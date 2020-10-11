@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017. Shanghai Zhenhui Information Technology Co,. ltd.
+  ~ All rights are reserved.
+  -->
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="autoIncrement" value="true" dbms="mysql,h2,postgresql,oracle"/>
+
+    <changeSet id="2019122410500001" author="lizz">
+        <sqlFile path="liquibase/sqlfile/mall_feedback_question.sql" encoding="UTF-8"></sqlFile>
+    </changeSet>
+
+    <changeSet id="2020031813480001" author="lizz">
+        <sql>
+            CREATE TABLE `mall_order_after_sales_problem` (
+            `id` varchar(20) NOT NULL,
+            `order_id` varchar(20) DEFAULT NULL COMMENT '订单id',
+            `problem_desc` varchar(200) DEFAULT NULL COMMENT '售后问题描述',
+            `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+            `update_date` datetime DEFAULT NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="2020061917280001" author="wuxb">
+        <createTable tableName="mall_push_item_rule" remarks="特殊发货规则">
+            <column name="id" type="varchar(20)" remarks="id">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="varchar(100)" remarks="商品名称"/>
+            <column name="sku_code" type="varchar(30)" remarks="商品SKU"/>
+            <column name="replace_title" type="varchar(100)" remarks="调整发货商品名称"/>
+            <column name="replace_sku_code" type="varchar(30)" remarks="调整发货商品SKU"/>
+            <column name="proportion" type="varchar(10)" remarks="发货比例"/>
+            <column name="valid_start_date" type="datetime" remarks="有效起始时间"/>
+            <column name="valid_end_date" type="datetime" remarks="有效截止时间"/>
+            <column name="online" type="char(1)" defaultValue="0" remarks="0关闭/1开启"/>
+            <column name="create_date" type="datetime" remarks="创建时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除：0正常/1删除"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="202007031058001" author="peng">
+        <addColumn tableName="mall_order_feedback">
+            <column name="addr_name" type="varchar(20)" remarks="补发的收货人姓名"></column>
+            <column name="addr_phone" type="varchar(20)" remarks="补发的收货人手机号"></column>
+            <column name="address" type="varchar(2000)" remarks="补发的收货地址"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="202008041527001" author="li.zhang">
+        <createTable tableName="async_task_info" remarks="异步任务信息表">
+            <column autoIncrement="true" name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="process_name" type="varchar(100)" remarks="任务来源"/>
+            <column name="user_id" type="varchar(20)" remarks="用户id"/>
+            <column name="param" type="varchar(1000)" remarks="请求参数"/>
+            <column name="status" type="char(1)" remarks="任务状态 1：等待中 2：处理中 3：失败 4：完成"/>
+            <column name="result" type="varchar(1000)" remarks="任务处理结果"/>
+            <column name="deal_start_time" type="datetime" remarks="处理开始时间"/>
+            <column name="deal_end_time" type="datetime" remarks="处理结束时间"/>
+            <column name="max_deal_time" type="int"  remarks="最大处理时间，单位为分钟"/>
+            <column name="create_time" type="datetime" remarks="创建时间"/>
+            <column name="is_del" type="char(1)" defaultValue="0" remarks="逻辑删除：0正常/1删除"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2020081311150001" author="li.zhang">
+        <createIndex tableName="async_task_info" indexName="idx_create_time">
+            <column name="create_time" type="datetime"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

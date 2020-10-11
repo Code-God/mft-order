@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meifute.core.mapper.SMSAcOrderVerifyMapper">
+
+    <select id="queryByOrderStatus" parameterType="com.meifute.core.vo.QuerySMSVerify" resultType="com.meifute.core.entity.SMSAcOrderVerify">
+        select t1.id, t1.proposer_id proposerId,t1.accepter_id accepterId,t1.verify_status verifyStatus,t1.total_amt totalAmt,
+        t1.freight_amt freightAmt,t1.create_date createDate,t1.verify_date verifyDate,t1.order_id orderId,t1.logistics_mode logisticsMode,
+        t1.state, t1.province, t1.city, t1.area,t1.street,t1.recipient_name recipientName, t1.recipient_phone recipientPhone,t1.remark,
+        t1.verify_remark verifyRemark,t1.verify_end_date verifyEndDate, t1.is_del isDel
+        from sms_ac_order_verify t1, mall_order_info t2
+        where t1.order_id = t2.order_id
+        and t2.subordinate_id = #{userId}
+        and t2.channel_state = '1'
+        and t2.order_status = #{orderStatus}
+        and t1.is_del = '0'
+        order by t1.create_date desc
+    </select>
+
+    <select id="queryToBeAudited" parameterType="com.meifute.core.vo.QuerySMSVerify" resultType="com.meifute.core.entity.SMSAcOrderVerify">
+        select t1.id, t1.proposer_id proposerId,t1.accepter_id accepterId,t1.verify_status verifyStatus,t1.total_amt totalAmt,
+        t1.freight_amt freightAmt,t1.create_date createDate,t1.verify_date verifyDate,t1.order_id orderId,t1.logistics_mode logisticsMode,
+        t1.state, t1.province, t1.city, t1.area,t1.street,t1.recipient_name recipientName, t1.recipient_phone recipientPhone,t1.remark,
+        t1.verify_remark verifyRemark,t1.verify_end_date verifyEndDate, t1.is_del isDel
+        from sms_ac_order_verify t1
+        where
+        t1.proposer_id = #{userId}
+        and t1.verify_status in
+         <foreach collection="orderStatusList"  item="item" open="(" separator="," close=")">
+             #{item}
+         </foreach>
+
+    </select>
+
+</mapper>
